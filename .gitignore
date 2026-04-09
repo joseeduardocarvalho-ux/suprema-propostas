@@ -1,0 +1,8 @@
+.DS_Store
+*.py
+serve.js
+transform_intl.py
+HTML/
+Images/
+.claude/
+node_modules/
