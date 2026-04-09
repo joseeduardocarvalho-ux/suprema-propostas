@@ -1029,23 +1029,30 @@ function updatePreview(){
 function printProposal(previewAreaId){
   var area=document.getElementById(previewAreaId);
   if(!area||!area.innerHTML.trim()){alert('Gere o preview antes de exportar o PDF.');return;}
+
+  // Extract only .slide elements (skip slide-wrap labels)
+  var slides=area.querySelectorAll('.slide');
+  if(!slides.length){alert('Nenhum slide encontrado.');return;}
+  var slidesHtml='';
+  slides.forEach(function(s){slidesHtml+=s.outerHTML;});
+
+  // Collect all CSS rules
   var css='';
   try{
     for(var s=0;s<document.styleSheets.length;s++){
       var sheet=document.styleSheets[s];
-      try{
-        for(var r=0;r<sheet.cssRules.length;r++){css+=sheet.cssRules[r].cssText+'\n';}
-      }catch(e){}
+      try{for(var r=0;r<sheet.cssRules.length;r++){css+=sheet.cssRules[r].cssText+'\n';}}catch(e){}
     }
   }catch(e){}
+
+  // @page: 1280px=13.3333in, 720px=7.5in at 96dpi — exact 16:9 landscape
   var printCss=
     '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}'+
-    '@page{size:1280px 720px;margin:0;}'+
-    'html,body{margin:0;padding:0;background:#000;width:1280px;}'+
-    '.slide-wrap{margin:0!important;padding:0!important;background:transparent!important;}'+
-    '.slide-num-label{display:none!important;}'+
-    '.slide{width:1280px!important;height:720px!important;page-break-after:always!important;break-after:page!important;overflow:hidden!important;position:relative!important;box-sizing:border-box!important;}';
-  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+printCss+'</style></head><body>'+area.innerHTML+'</body></html>';
+    '@page{size:13.3333in 7.5in;margin:0;}'+
+    'html,body{margin:0;padding:0;background:#000;width:1280px;height:720px;}'+
+    '.slide{width:1280px!important;height:720px!important;page-break-after:always!important;break-after:page!important;overflow:hidden!important;position:relative!important;box-sizing:border-box!important;display:block!important;}';
+
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+printCss+'</style></head><body>'+slidesHtml+'</body></html>';
   var win=window.open('','_blank');
   win.document.write(html);
   win.document.close();
