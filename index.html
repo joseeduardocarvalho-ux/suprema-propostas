@@ -1059,12 +1059,15 @@ function printProposal(previewAreaId){
   function doGenerate(){
     setStatus('Aquecendo renderizador...');
 
-    // Warmup pass: render ALL slides simultaneously at low quality to populate
-    // dom-to-image's internal fetch cache (fixes slides 1 & 2 missing images/backgrounds)
-    var captureOpts={quality:0.1,width:1280,height:720,style:{'transform':'none','transform-origin':'top left','overflow':'hidden','width':'1280px','height':'720px','min-height':'720px','max-height':'720px'}};
+    // Warmup pass at natural dimensions to prime dom-to-image's internal URL cache
     var warmupDone=0;
     slides.forEach(function(slide){
-      domtoimage.toJpeg(slide,captureOpts)
+      domtoimage.toJpeg(slide,{
+        quality:0.1,
+        width:slide.offsetWidth,
+        height:slide.offsetHeight,
+        style:{'transform':'none','transform-origin':'top left','overflow':'hidden'}
+      })
         .then(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);})
         .catch(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);});
     });
@@ -1077,7 +1080,6 @@ function printProposal(previewAreaId){
 
       function captureSlide(){
         if(idx>=slides.length){
-          // filename from first text input in active screen
           var fname='Suprema_Proposta';
           var screens=document.querySelectorAll('[id^="generator"]');
           screens.forEach(function(scr){
@@ -1092,19 +1094,20 @@ function printProposal(previewAreaId){
           return;
         }
         setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
+        var sw=slides[idx].offsetWidth;
+        var sh=slides[idx].offsetHeight;
+        // Scale up for crisp PDF quality (target ~1280px width)
+        var sc=Math.max(1,Math.ceil(1280/sw));
         setTimeout(function(){
           domtoimage.toJpeg(slides[idx],{
             quality:0.96,
-            width:1280,
-            height:720,
+            width:sw,
+            height:sh,
+            scale:sc,
             style:{
               'transform':'none',
               'transform-origin':'top left',
-              'overflow':'hidden',
-              'width':'1280px',
-              'height':'720px',
-              'min-height':'720px',
-              'max-height':'720px'
+              'overflow':'hidden'
             }
           }).then(function(dataUrl){
             if(idx>0)pdf.addPage([PW,PH],'landscape');
