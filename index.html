@@ -1029,35 +1029,66 @@ function updatePreview(){
 function printProposal(previewAreaId){
   var area=document.getElementById(previewAreaId);
   if(!area||!area.innerHTML.trim()){alert('Gere o preview antes de exportar o PDF.');return;}
-
-  // Extract only .slide elements (skip slide-wrap labels)
-  var slides=area.querySelectorAll('.slide');
+  var slides=Array.from(area.querySelectorAll('.slide'));
   if(!slides.length){alert('Nenhum slide encontrado.');return;}
-  var slidesHtml='';
-  slides.forEach(function(s){slidesHtml+=s.outerHTML;});
 
-  // Collect all CSS rules
-  var css='';
-  try{
-    for(var s=0;s<document.styleSheets.length;s++){
-      var sheet=document.styleSheets[s];
-      try{for(var r=0;r<sheet.cssRules.length;r++){css+=sheet.cssRules[r].cssText+'\n';}}catch(e){}
+  // Find the button that triggered this and show loading state
+  var btns=document.querySelectorAll('.btn-generate');
+  var activeBtn=null;
+  btns.forEach(function(b){if(b.closest('[style*="block"]')||b.closest('[style*="flex"]'))activeBtn=b;});
+  if(activeBtn){activeBtn.disabled=true;activeBtn.textContent='Gerando PDF...';}
+
+  // PDF dimensions: 1280×720px → in mm (1px = 25.4/96 mm)
+  var PW=338.667,PH=190.5;
+
+  function doGenerate(){
+    var jsPDF=window.jspdf.jsPDF;
+    var pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[PW,PH]});
+    var idx=0;
+
+    function next(){
+      if(idx>=slides.length){
+        var title=(document.querySelector('.input-brand')||{}).value||'Suprema_Proposta';
+        pdf.save(title.trim().replace(/\s+/g,'_')+'_Proposta.pdf');
+        if(activeBtn){activeBtn.disabled=false;activeBtn.textContent='Gerar PDF da Proposta';}
+        return;
+      }
+      var slide=slides[idx];
+      // Clone off-screen at full 1280×720 to avoid any preview scaling
+      var clone=slide.cloneNode(true);
+      clone.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1280px;height:720px;transform:none;zoom:1;overflow:hidden;';
+      document.body.appendChild(clone);
+      html2canvas(clone,{
+        scale:2,useCORS:true,allowTaint:true,
+        backgroundColor:'#000000',
+        width:1280,height:720,logging:false
+      }).then(function(canvas){
+        document.body.removeChild(clone);
+        var img=canvas.toDataURL('image/jpeg',0.95);
+        if(idx>0)pdf.addPage([PW,PH],'landscape');
+        pdf.addImage(img,'JPEG',0,0,PW,PH);
+        idx++;next();
+      }).catch(function(){
+        document.body.removeChild(clone);
+        idx++;next();
+      });
     }
-  }catch(e){}
+    next();
+  }
 
-  // @page: 1280px=13.3333in, 720px=7.5in at 96dpi — exact 16:9 landscape
-  var printCss=
-    '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}'+
-    '@page{size:13.3333in 7.5in;margin:0;}'+
-    'html,body{margin:0;padding:0;background:#000;width:1280px;height:720px;}'+
-    '.slide{width:1280px!important;height:720px!important;page-break-after:always!important;break-after:page!important;overflow:hidden!important;position:relative!important;box-sizing:border-box!important;display:block!important;}';
+  function loadScript(src,cb){
+    var s=document.createElement('script');s.src=src;s.onload=cb;document.head.appendChild(s);
+  }
 
-  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+printCss+'</style></head><body>'+slidesHtml+'</body></html>';
-  var win=window.open('','_blank');
-  win.document.write(html);
-  win.document.close();
-  win.focus();
-  setTimeout(function(){win.print();},800);
+  if(typeof html2canvas!=='undefined'&&window.jspdf){
+    doGenerate();
+  } else if(typeof html2canvas!=='undefined'){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',doGenerate);
+  } else {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(){
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',doGenerate);
+    });
+  }
 }
 
 function generatePDF(){printProposal('previewArea');}
