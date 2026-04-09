@@ -1057,42 +1057,20 @@ function printProposal(previewAreaId){
   var PW=338.667,PH=190.5;
 
   function doGenerate(){
-    setStatus('Pré-carregando imagens...');
+    setStatus('Aquecendo renderizador...');
 
-    // Collect ALL image URLs (src attrs + CSS background-image) from all slides
-    var allUrls=[];
-    var seen={};
+    // Warmup pass: render ALL slides simultaneously at low quality to populate
+    // dom-to-image's internal fetch cache (fixes slides 1 & 2 missing images/backgrounds)
+    var captureOpts={quality:0.1,width:1280,height:720,style:{'transform':'none','transform-origin':'top left','overflow':'hidden','width':'1280px','height':'720px','min-height':'720px','max-height':'720px'}};
+    var warmupDone=0;
     slides.forEach(function(slide){
-      // img elements
-      slide.querySelectorAll('img').forEach(function(img){
-        if(img.src&&!seen[img.src]){seen[img.src]=1;allUrls.push(img.src);}
-      });
-      // CSS background-image on every element
-      slide.querySelectorAll('*').forEach(function(el){
-        try{
-          var bg=window.getComputedStyle(el).backgroundImage||'';
-          var m=bg.match(/url\(["']?(data:[^"')]{10,})["']?\)/);
-          if(m&&!seen[m[1]]){seen[m[1]]=1;allUrls.push(m[1]);}
-        }catch(e){}
-      });
-    });
-
-    // Force browser to fully decode every image before capture
-    var pending=allUrls.length;
-    function afterPreload(){
-      setStatus('Gerando slides...');
-      // Extra wait to let the browser paint all decoded images
-      setTimeout(startCapture, 600);
-    }
-
-    if(pending===0){afterPreload();return;}
-    allUrls.forEach(function(url){
-      var img=new Image();
-      img.onload=img.onerror=function(){if(--pending===0)afterPreload();};
-      img.src=url;
+      domtoimage.toJpeg(slide,captureOpts)
+        .then(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);})
+        .catch(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);});
     });
 
     function startCapture(){
+      setStatus('Gerando slides...');
       var jsPDF=window.jspdf.jsPDF;
       var pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[PW,PH]});
       var idx=0;
@@ -1114,7 +1092,6 @@ function printProposal(previewAreaId){
           return;
         }
         setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
-        // Delay between slides so browser can paint
         setTimeout(function(){
           domtoimage.toJpeg(slides[idx],{
             quality:0.96,
@@ -1124,6 +1101,9 @@ function printProposal(previewAreaId){
               'transform':'none',
               'transform-origin':'top left',
               'overflow':'hidden',
+              'width':'1280px',
+              'height':'720px',
+              'min-height':'720px',
               'max-height':'720px'
             }
           }).then(function(dataUrl){
