@@ -1060,14 +1060,11 @@ function printProposal(previewAreaId){
     setStatus('Aquecendo renderizador...');
 
     // Warmup pass at natural dimensions to prime dom-to-image's internal URL cache
+    // Warmup at 1280x720 to prime dom-to-image's internal URL cache
     var warmupDone=0;
+    var SLIDE_STYLE={'transform':'none','transform-origin':'top left','overflow':'hidden','width':'1280px','height':'720px','align-content':'stretch','grid-auto-rows':'1fr'};
     slides.forEach(function(slide){
-      domtoimage.toJpeg(slide,{
-        quality:0.1,
-        width:slide.offsetWidth,
-        height:slide.offsetHeight,
-        style:{'transform':'none','transform-origin':'top left','overflow':'hidden'}
-      })
+      domtoimage.toJpeg(slide,{quality:0.1,width:1280,height:720,style:SLIDE_STYLE})
         .then(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);})
         .catch(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);});
     });
@@ -1094,21 +1091,12 @@ function printProposal(previewAreaId){
           return;
         }
         setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
-        var sw=slides[idx].offsetWidth;
-        var sh=slides[idx].offsetHeight;
-        // Scale up for crisp PDF quality (target ~1280px width)
-        var sc=Math.max(1,Math.ceil(1280/sw));
         setTimeout(function(){
           domtoimage.toJpeg(slides[idx],{
             quality:0.96,
-            width:sw,
-            height:sh,
-            scale:sc,
-            style:{
-              'transform':'none',
-              'transform-origin':'top left',
-              'overflow':'hidden'
-            }
+            width:1280,
+            height:720,
+            style:SLIDE_STYLE
           }).then(function(dataUrl){
             if(idx>0)pdf.addPage([PW,PH],'landscape');
             pdf.addImage(dataUrl,'JPEG',0,0,PW,PH);
