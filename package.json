@@ -2,7 +2,7 @@
   "name": "suprema-propostas",
   "version": "1.0.0",
   "dependencies": {
-    "@sparticuz/chromium": "^131.0.1",
-    "puppeteer-core": "^23.0.0"
+    "@sparticuz/chromium": "119.0.2",
+    "puppeteer-core": "21.3.8"
   }
 }
