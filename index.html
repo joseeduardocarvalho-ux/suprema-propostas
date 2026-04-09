@@ -884,14 +884,14 @@ function handleLogoUpload(e){const f=e.target.files[0];if(!f)return;const r=new 
 function resetLogo(){clientLogoData=null;document.getElementById('clientLogo').value='';document.getElementById('logoPreviewBox').style.display='none';document.getElementById('logoDropzone').style.display='block';updatePreview();}
 let cc=1;
 function addClass(){cc++;const c=document.getElementById('classesContainer'),d=document.createElement('div');d.className='class-card';d.dataset.idx=cc-1;d.innerHTML=`<div class="class-head"><span class="class-num">Classe ${cc}</span><button class="btn-remove" onclick="removeClass(${cc-1})">&times;</button></div><div style="display:flex;gap:8px;"><div style="flex:0 0 100px;"><label class="field-label">Numero</label><input type="number" class="cls-number" placeholder="35" min="1" max="45" oninput="updatePreview()"></div><div style="flex:1;"><label class="field-label">Especificacoes</label><textarea class="cls-desc" placeholder="Descricao..." rows="2" oninput="updatePreview()"></textarea></div></div>`;c.appendChild(d);renumberClasses();recalcValues();updatePreview();}
-function removeClass(i){const it=document.querySelectorAll('.class-card');if(it.length<=1)return;it.forEach(el=>{if(parseInt(el.dataset.idx)===i)el.remove();});renumberClasses();recalcValues();}
-function renumberClasses(){document.querySelectorAll('.class-card').forEach((el,i)=>{el.dataset.idx=i;el.querySelector('.class-num').textContent=`Classe ${i+1}`;});}
+function removeClass(i){const it=document.querySelectorAll('#classesContainer .class-card');if(it.length<=1)return;it.forEach(el=>{if(parseInt(el.dataset.idx)===i)el.remove();});renumberClasses();recalcValues();}
+function renumberClasses(){document.querySelectorAll('#classesContainer .class-card').forEach((el,i)=>{el.dataset.idx=i;el.querySelector('.class-num').textContent=`Classe ${i+1}`;});}
 function gd(){
-  const cls=[];document.querySelectorAll('.class-card').forEach(el=>{cls.push({n:el.querySelector('.cls-number')?.value||'',d:el.querySelector('.cls-desc')?.value||''});});
+  const cls=[];document.querySelectorAll('#classesContainer .class-card').forEach(el=>{cls.push({n:el.querySelector('.cls-number')?.value||'',d:el.querySelector('.cls-desc')?.value||''});});
   const p=document.querySelector('input[name="pres"]:checked').value;
   const dp=buildPayStr('Deposito');
   const hp=buildPayStr('Honorarios');
-  return{bn:document.getElementById('brandName').value||'Nome da Marca',pr:p,cls,dep:document.getElementById('valDeposito').value||'R$660,00',hon:document.getElementById('valHonorarios').value||'R$1.800,00',exa:document.getElementById('valExame').value||'R$998,00',anu:document.getElementById('valAnuidade').value||'R$395,00',dp,hp,nt:document.getElementById('tableNote').value,ia:document.getElementById('includeAdditional').value==='1',nc:document.querySelectorAll('.class-card').length};
+  return{bn:document.getElementById('brandName').value||'Nome da Marca',pr:p,cls,dep:document.getElementById('valDeposito').value||'R$660,00',hon:document.getElementById('valHonorarios').value||'R$1.800,00',exa:document.getElementById('valExame').value||'R$998,00',anu:document.getElementById('valAnuidade').value||'R$395,00',dp,hp,nt:document.getElementById('tableNote').value,ia:document.getElementById('includeAdditional').value==='1',nc:document.querySelectorAll('#classesContainer .class-card').length};
 }
 
 // ─── VALORES ────────────────────────────────────────────────────────────────
@@ -919,7 +919,7 @@ function setVal(id,cents){
   requestAnimationFrame(()=>{el.scrollLeft=0;});
 }
 function recalcValues(){
-  const n=document.querySelectorAll('.class-card').length;
+  const n=document.querySelectorAll('#classesContainer .class-card').length;
   setVal('valDeposito',BASE_DEP*n);
   setVal('valHonorarios',BASE_HON*n);
   setVal('valExame',BASE_EXA*n);
@@ -1038,16 +1038,19 @@ function printProposal(previewAreaId){
       }catch(e){}
     }
   }catch(e){}
-  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+
+  var printCss=
+    '*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important;}'+
     '@page{size:1280px 720px;margin:0;}'+
-    'body{margin:0;padding:0;background:#000;}'+
-    '.slide{page-break-after:always;break-after:page;}'+
-    '</style></head><body>'+area.innerHTML+'</body></html>';
+    'html,body{margin:0;padding:0;background:#000;width:1280px;}'+
+    '.slide-wrap{margin:0!important;padding:0!important;background:transparent!important;}'+
+    '.slide-num-label{display:none!important;}'+
+    '.slide{width:1280px!important;height:720px!important;page-break-after:always!important;break-after:page!important;overflow:hidden!important;position:relative!important;box-sizing:border-box!important;}';
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><style>'+css+printCss+'</style></head><body>'+area.innerHTML+'</body></html>';
   var win=window.open('','_blank');
   win.document.write(html);
   win.document.close();
   win.focus();
-  setTimeout(function(){win.print();},600);
+  setTimeout(function(){win.print();},800);
 }
 
 function generatePDF(){printProposal('previewArea');}
@@ -1917,9 +1920,9 @@ function resetLogoTrid(){clientLogoDataTrid=null;document.getElementById('client
 
 function addClassTrid(){cc++;const c=document.getElementById('classesContainerTrid'),d=document.createElement('div');d.className='class-card';d.dataset.idx=cc-1;d.innerHTML=`<div class="class-head"><span class="class-num">Classe ${cc}</span><button class="btn-remove" onclick="removeClassTrid(${cc-1})">&times;</button></div><div style="display:flex;gap:8px;"><div style="flex:0 0 100px;"><label class="field-label">Numero</label><input type="number" class="cls-number" placeholder="35" min="1" max="45" oninput="updatePreviewTrid()"></div><div style="flex:1;"><label class="field-label">Especificacoes</label><textarea class="cls-desc" placeholder="Descricao..." rows="2" oninput="updatePreviewTrid()"></textarea></div></div>`;c.appendChild(d);renumberClassesTrid();recalcValuesTrid();updatePreviewTrid();}
 
-function removeClassTrid(i){const it=document.querySelectorAll('.class-card');if(it.length<=1)return;it.forEach(el=>{if(parseInt(el.dataset.idx)===i)el.remove();});renumberClassesTrid();recalcValuesTrid();}
+function removeClassTrid(i){const it=document.querySelectorAll('#classesContainerTrid .class-card');if(it.length<=1)return;it.forEach(el=>{if(parseInt(el.dataset.idx)===i)el.remove();});renumberClassesTrid();recalcValuesTrid();}
 
-function renumberClassesTrid(){document.querySelectorAll('.class-card').forEach((el,i)=>{el.dataset.idx=i;el.querySelector('.class-num').textContent=`Classe ${i+1}`;});}
+function renumberClassesTrid(){document.querySelectorAll('#classesContainerTrid .class-card').forEach((el,i)=>{el.dataset.idx=i;el.querySelector('.class-num').textContent=`Classe ${i+1}`;});}
 
 function buildPayStrTrid(field){
   const pgto=document.getElementById('pgto'+field).value;
@@ -1938,15 +1941,15 @@ function buildPayStrTrid(field){
 }
 
 function gdTrid(){
-  const cls=[];document.querySelectorAll('.class-card').forEach(el=>{cls.push({n:el.querySelector('.cls-number')?.value||'',d:el.querySelector('.cls-desc')?.value||''});});
+  const cls=[];document.querySelectorAll('#classesContainerTrid .class-card').forEach(el=>{cls.push({n:el.querySelector('.cls-number')?.value||'',d:el.querySelector('.cls-desc')?.value||''});});
   const p=document.querySelector('input[name="presTrid"]:checked').value;
   const dp=buildPayStr('Deposito');
   const hp=buildPayStr('Honorarios');
-  return{bn:document.getElementById('brandNameTrid').value||'Nome da Marca',pr:p,cls,dep:document.getElementById('valDepositoTrid').value||'R$660,00',hon:document.getElementById('valHonorariosTrid').value||'R$1.800,00',exa:document.getElementById('valExameTrid').value||'R$998,00',anu:document.getElementById('valAnuidadeTrid').value||'R$395,00',dp,hp,nt:document.getElementById('tableNoteTrid').value,ia:document.getElementById('includeAdditionalTrid').value==='1',nc:document.querySelectorAll('.class-card').length};
+  return{bn:document.getElementById('brandNameTrid').value||'Nome da Marca',pr:p,cls,dep:document.getElementById('valDepositoTrid').value||'R$660,00',hon:document.getElementById('valHonorariosTrid').value||'R$1.800,00',exa:document.getElementById('valExameTrid').value||'R$998,00',anu:document.getElementById('valAnuidadeTrid').value||'R$395,00',dp,hp,nt:document.getElementById('tableNoteTrid').value,ia:document.getElementById('includeAdditionalTrid').value==='1',nc:document.querySelectorAll('#classesContainerTrid .class-card').length};
 }
 
 function recalcValuesTrid(){
-  const n=document.querySelectorAll('.class-card').length;
+  const n=document.querySelectorAll('#classesContainerTrid .class-card').length;
   setVal('valDepositoTrid',BASE_DEP*n);
   setVal('valHonorariosTrid',BASE_HON*n);
   setVal('valExameTrid',BASE_EXA*n);
