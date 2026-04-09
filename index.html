@@ -1057,58 +1057,47 @@ function printProposal(previewAreaId){
   var PW=338.667,PH=190.5;
 
   function doGenerate(){
-    setStatus('Aquecendo renderizador...');
+    setStatus('Gerando slides...');
+    var jsPDF=window.jspdf.jsPDF;
+    var pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[PW,PH]});
+    var idx=0;
 
-    // Warmup pass at natural dimensions to prime dom-to-image's internal URL cache
-    // Warmup at 1280x720 to prime dom-to-image's internal URL cache
-    var warmupDone=0;
-    var SLIDE_STYLE={'transform':'none','transform-origin':'top left','overflow':'hidden','width':'1280px','height':'720px','align-content':'stretch','grid-auto-rows':'1fr'};
-    slides.forEach(function(slide){
-      domtoimage.toJpeg(slide,{quality:0.1,width:1280,height:720,style:SLIDE_STYLE})
-        .then(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);})
-        .catch(function(){if(++warmupDone===slides.length)setTimeout(startCapture,400);});
-    });
-
-    function startCapture(){
-      setStatus('Gerando slides...');
-      var jsPDF=window.jspdf.jsPDF;
-      var pdf=new jsPDF({orientation:'landscape',unit:'mm',format:[PW,PH]});
-      var idx=0;
-
-      function captureSlide(){
-        if(idx>=slides.length){
-          var fname='Suprema_Proposta';
-          var screens=document.querySelectorAll('[id^="generator"]');
-          screens.forEach(function(scr){
-            if(scr.style.display!=='none'){
-              var inp=scr.querySelector('input[type="text"]');
-              if(inp&&inp.value.trim())fname=inp.value.trim().replace(/\s+/g,'_');
-            }
-          });
-          setStatus('Salvando PDF...');
-          pdf.save(fname+'_Proposta.pdf');
-          setTimeout(done,800);
-          return;
-        }
-        setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
-        setTimeout(function(){
-          domtoimage.toJpeg(slides[idx],{
-            quality:0.96,
-            width:1280,
-            height:720,
-            style:SLIDE_STYLE
-          }).then(function(dataUrl){
-            if(idx>0)pdf.addPage([PW,PH],'landscape');
-            pdf.addImage(dataUrl,'JPEG',0,0,PW,PH);
-            idx++;captureSlide();
-          }).catch(function(e){
-            console.warn('Slide '+idx+' error:',e);
-            idx++;captureSlide();
-          });
-        }, idx===0 ? 0 : 150);
+    function captureSlide(){
+      if(idx>=slides.length){
+        var fname='Suprema_Proposta';
+        var screens=document.querySelectorAll('[id^="generator"]');
+        screens.forEach(function(scr){
+          if(scr.style.display!=='none'){
+            var inp=scr.querySelector('input[type="text"]');
+            if(inp&&inp.value.trim())fname=inp.value.trim().replace(/\s+/g,'_');
+          }
+        });
+        setStatus('Salvando PDF...');
+        pdf.save(fname+'_Proposta.pdf');
+        setTimeout(done,800);
+        return;
       }
-      captureSlide();
+      setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
+      html2canvas(slides[idx],{
+        useCORS:false,
+        allowTaint:true,
+        backgroundColor:null,
+        scale:2,
+        logging:false,
+        removeContainer:true
+      }).then(function(canvas){
+        var dataUrl=canvas.toDataURL('image/jpeg',0.96);
+        if(idx>0)pdf.addPage([PW,PH],'landscape');
+        pdf.addImage(dataUrl,'JPEG',0,0,PW,PH);
+        idx++;
+        setTimeout(captureSlide,100);
+      }).catch(function(e){
+        console.warn('Slide '+idx+' error:',e);
+        idx++;
+        setTimeout(captureSlide,100);
+      });
     }
+    captureSlide();
   }
 
   function loadScript(src,cb){
@@ -1118,13 +1107,13 @@ function printProposal(previewAreaId){
   }
 
   setStatus('Carregando bibliotecas...');
-  var hasD2I=typeof domtoimage!=='undefined';
+  var hasH2C=typeof html2canvas!=='undefined';
   var hasJsPDF=typeof window.jspdf!=='undefined';
 
-  if(hasD2I&&hasJsPDF){doGenerate();}
-  else if(hasD2I){loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',doGenerate);}
+  if(hasH2C&&hasJsPDF){doGenerate();}
+  else if(hasH2C){loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',doGenerate);}
   else{
-    loadScript('https://cdn.jsdelivr.net/npm/dom-to-image-more@3.1.2/dist/dom-to-image-more.min.js',function(){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(){
       if(window.jspdf){doGenerate();}
       else{loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',doGenerate);}
     });
