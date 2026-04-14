@@ -427,6 +427,11 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
   <div class="svc-info"><div class="svc-name">Alteração de Nome / Sede</div><div class="svc-desc">Atualização de dados do titular no INPI</div></div>
   <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
 </div>
+<div class="svc-card active" onclick="openService('gestao')">
+  <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
+  <div class="svc-info"><div class="svc-name">Gestão de Carteira</div><div class="svc-desc">Assumir e gerenciar portfólio completo de marcas do cliente</div></div>
+  <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
+</div>
 <div class="svc-card active parceria-card" onclick="openService('parceria')" style="grid-column:1/-1;">
   <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div class="svc-info">
@@ -721,6 +726,31 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 </div></div><!-- /generatorAlteracaoScreen -->
 
 <!-- ===== PARCERIA SCREEN ===== -->
+<div id="generatorGestaoScreen" style="display:none">
+<div class="page">
+<div class="header"><div class="header-logo"><img id="homeLogoGestao"></div><div class="header-title">Gerador de Propostas</div><div class="header-sub">Gestão de Carteira de Marcas</div></div>
+<div class="form-section glass" style="margin-top:24px;">
+  <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="gestaoCliente" value="30praum" oninput="recalcGestaoPreview()" onfocus="this.select()"></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+    <div class="field"><label class="field-label">Processos Concedidos</label><input type="number" id="gestaoConcedidos" value="19" min="0" oninput="recalcGestaoPreview()"></div>
+    <div class="field"><label class="field-label">Em Andamento</label><input type="number" id="gestaoAndamento" value="6" min="0" oninput="recalcGestaoPreview()"></div>
+    <div class="field"><label class="field-label">Indeferidos</label><input type="number" id="gestaoIndeferidos" value="4" min="0" oninput="recalcGestaoPreview()"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="field"><label class="field-label">Taxa Procuração (por processo)</label><input type="text" id="gestaoTaxaProc" value="R$ 490,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
+    <div class="field"><label class="field-label">Pgto das Taxas</label><select id="gestaoPgtoTaxa" onchange="recalcGestaoPreview()"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao10x" selected>Cartão 10x sem juros</option><option value="AVista">Cartão à Vista</option></select></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="field"><label class="field-label">Honorários — Processos em Andamento</label><input type="text" id="gestaoHonAndamento" value="R$ 4.500,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
+    <div class="field"><label class="field-label">Anuidade de Acompanhamento</label><input type="text" id="gestaoAnuidade" value="R$ 5.985,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
+  </div>
+  <div class="field"><label class="field-label">Recurso Futuro (por processo, se necessário)</label><input type="text" id="gestaoRecurso" value="R$ 985,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
+</div>
+<div style="margin-top:16px;" id="previewAreaGestao"></div>
+<button class="btn-generate" onclick="generateGestaoPDF()">Gerar PDF da Proposta</button>
+</div>
+</div><!-- /generatorGestaoScreen -->
+
 <div id="generatorParceiraScreen" style="display:none">
 <div class="ambient"><div class="orb r"></div><div class="orb g"></div></div>
 <div class="page">
@@ -1633,6 +1663,9 @@ function openService(svc){
   } else if(svc==='alteracao'){
     document.getElementById('generatorAlteracaoScreen').style.display='block';
     recalcAlteracaoPreview();
+  } else if(svc==='gestao'){
+    document.getElementById('generatorGestaoScreen').style.display='block';
+    recalcGestaoPreview();
   } else if(svc==='parceria'){
     document.getElementById('generatorParceiraScreen').style.display='block';
     recalcParceiraPreview();
@@ -1659,6 +1692,7 @@ function goHome(){
   document.getElementById('generatorManifestacaoScreen').style.display='none';
   document.getElementById('generatorContrarazoesScreen').style.display='none';
   document.getElementById('generatorNotificacaoScreen').style.display='none';
+  document.getElementById('generatorGestaoScreen').style.display='none';
   document.getElementById('generatorParceiraScreen').style.display='none';
   document.getElementById('generatorCessaoScreen').style.display='none';
   document.getElementById('generatorOposicaoScreen').style.display='none';
@@ -2040,6 +2074,7 @@ function recalcIntlPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -2154,7 +2189,7 @@ function generateIntlPDF(){printProposal('previewAreaIntl');}
 window.addEventListener('DOMContentLoaded',function(){
   const li=document.getElementById('homeLogoIntl');
   if(li)li.src=IMG_LOGO_R;
-  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao'].forEach(id=>{
+  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao','homeLogoGestao'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.src=IMG_LOGO_R;
   });
@@ -2226,6 +2261,7 @@ function recalcPatPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -2383,6 +2419,7 @@ function recalcPatIntlPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -2684,8 +2721,12 @@ function buildPayStrBC(){
   if(pgto==='PIX')return'PIX';
   const modo=document.querySelector('input[name="modoBlockchain"]:checked')?.value||'vista';
   if(modo==='vista')return pgto+' à Vista';
-  const n=document.getElementById('parcelasBlockchainNum')?.value||'';
-  return pgto+(n?' em '+n+'x':'');
+  const n=parseInt(document.getElementById('parcelasBlockchainNum')?.value)||0;
+  if(n<2)return pgto+' Parcelado';
+  const raw=(document.getElementById('valBlockchain').value||'0').replace(/[R$\s.]/g,'').replace(',','.');
+  const total=parseFloat(raw)||0;
+  const pvStr=(total/n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return pgto==='Boleto'?'Boleto em '+n+'x de R$ '+pvStr:'Cartão de Crédito em '+n+'x de R$ '+pvStr+' sem juros';
 }
 function gdBlockchain(){
   return{
@@ -2707,6 +2748,7 @@ function recalcBlockchainPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -2852,8 +2894,12 @@ function buildPayStrDI(field){
   if(pgto==='PIX')return'PIX';
   const modo=document.querySelector('input[name="modo'+field+'"]:checked')?.value||'vista';
   if(modo==='vista')return pgto+' à Vista';
-  const n=document.getElementById('parcelas'+field+'Num')?.value||'';
-  return pgto+(n?' em '+n+'x':'');
+  const n=parseInt(document.getElementById('parcelas'+field+'Num')?.value)||0;
+  if(n<2)return pgto+' Parcelado';
+  const raw=(document.getElementById('val'+field).value||'0').replace(/[R$\s.]/g,'').replace(',','.');
+  const total=parseFloat(raw)||0;
+  const pvStr=(total/n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return pgto==='Boleto'?'Boleto em '+n+'x de R$ '+pvStr:'Cartão de Crédito em '+n+'x de R$ '+pvStr+' sem juros';
 }
 function gdDI(){
   const incPesq=document.getElementById('incluirPesqDI').value==='1';
@@ -2886,6 +2932,7 @@ function recalcDesenhoPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -2963,8 +3010,12 @@ function buildPayStrSW(field){
   if(pgto==='PIX')return'PIX';
   const modo=document.querySelector('input[name="modo'+field+'"]:checked')?.value||'vista';
   if(modo==='vista')return pgto+' à Vista';
-  const n=document.getElementById('parcelas'+field+'Num')?.value||'';
-  return pgto+(n?' em '+n+'x':'');
+  const n=parseInt(document.getElementById('parcelas'+field+'Num')?.value)||0;
+  if(n<2)return pgto+' Parcelado';
+  const raw=(document.getElementById('val'+field).value||'0').replace(/[R$\s.]/g,'').replace(',','.');
+  const total=parseFloat(raw)||0;
+  const pvStr=(total/n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return pgto==='Boleto'?'Boleto em '+n+'x de R$ '+pvStr:'Cartão de Crédito em '+n+'x de R$ '+pvStr+' sem juros';
 }
 function gdSW(){
   return{
@@ -2990,6 +3041,7 @@ function recalcSoftwarePreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -3120,8 +3172,12 @@ function buildPayStrDA(field){
   if(pgto==='PIX')return'PIX';
   const modo=document.querySelector('input[name="modo'+field+'"]:checked')?.value||'vista';
   if(modo==='vista')return pgto+' à Vista';
-  const n=document.getElementById('parcelas'+field+'Num')?.value||'';
-  return pgto+(n?' em '+n+'x':'');
+  const n=parseInt(document.getElementById('parcelas'+field+'Num')?.value)||0;
+  if(n<2)return pgto+' Parcelado';
+  const raw=(document.getElementById('val'+field).value||'0').replace(/[R$\s.]/g,'').replace(',','.');
+  const total=parseFloat(raw)||0;
+  const pvStr=(total/n).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return pgto==='Boleto'?'Boleto em '+n+'x de R$ '+pvStr:'Cartão de Crédito em '+n+'x de R$ '+pvStr+' sem juros';
 }
 function gdDA(){
   return{
@@ -3147,6 +3203,7 @@ function recalcDAPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -3279,6 +3336,7 @@ function recalcPCTPreview(){
     <div class="inst-left">
       <div class="inst-title-block"><h2>Muito Prazer,<br><span>Somos a Suprema</span></h2></div>
       <div class="inst-text">Fundada por agentes experientes da área, surgiu com um <strong>propósito claro, oferecer um serviço altamente especializado e personalizado na proteção de ativos intelectuais no Brasil.</strong> Desde o início, nossa missão foi proporcionar segurança jurídica e estratégica para marcas, patentes e inovações, com foco absoluto na excelência.<br><br>Hoje, mais de duas décadas depois, a Suprema se consolidou como uma das principais referências em Propriedade Intelectual do país. Com cinco escritórios espalhados pelo Brasil, <strong>somos responsáveis por mais de 27 mil processos nacionais e internacionais e contamos com uma base ativa de mais de 25 mil clientes.</strong><br><br>Acreditamos que marcas e patentes bem protegidas <strong>geram valor real, vantagem competitiva e crescimento sustentável</strong> para qualquer negócio.</div>
+      <img src="${IMG_NUMS}" style="width:100%;max-width:420px;margin-top:clamp(8px,1.2vw,14px);object-fit:contain;border-radius:clamp(4px,.6vw,8px);">
     </div>
     <div class="inst-photo" style="background-image:url('${IMG_TEAM}')"></div>
   </div></div>`;
@@ -4247,6 +4305,70 @@ function recalcAlteracaoPreview(){
   if(a)a.innerHTML=h;
 }
 function generateAlteracaoPDF(){printProposal('previewAreaAlteracao');}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  GESTÃO DE CARTEIRA DE MARCAS
+// ═══════════════════════════════════════════════════════════════
+function parseGestaoVal(id){
+  const raw=(document.getElementById(id).value||'0').replace(/[R$\s.]/g,'').replace(',','.');
+  return parseFloat(raw)||0;
+}
+function fmtBRL2(v){
+  return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function recalcGestaoPreview(){
+  const cliente    = document.getElementById('gestaoCliente').value||'Cliente';
+  const concedidos = parseInt(document.getElementById('gestaoConcedidos').value)||0;
+  const andamento  = parseInt(document.getElementById('gestaoAndamento').value)||0;
+  const indeferidos= parseInt(document.getElementById('gestaoIndeferidos').value)||0;
+  const totalProc  = concedidos + andamento;
+  const totalMarcas= concedidos + andamento + indeferidos;
+
+  const pgtoTaxa   = document.getElementById('gestaoPgtoTaxa').value;
+  const taxaUnit   = parseGestaoVal('gestaoTaxaProc');
+  const taxaTotal  = taxaUnit * totalProc;
+  const honAnd     = parseGestaoVal('gestaoHonAndamento');
+  const anuidade   = parseGestaoVal('gestaoAnuidade');
+  const recurso    = parseGestaoVal('gestaoRecurso');
+
+  let pgtoTaxaStr;
+  if(pgtoTaxa==='Cartao10x'){
+    pgtoTaxaStr = 'Cartão 10x de '+fmtBRL2(taxaTotal/10)+' sem juros';
+  } else if(pgtoTaxa==='PIX'){
+    pgtoTaxaStr = 'PIX';
+  } else if(pgtoTaxa==='Boleto'){
+    pgtoTaxaStr = 'Boleto';
+  } else {
+    pgtoTaxaStr = 'Cartão de Crédito';
+  }
+
+  let h='', sn=1;
+
+  h+=_slideCover('Gestão Completa<br>da Sua Carteira de Marcas.', cliente+' — Suprema Propriedade Intelectual');
+  h+=_slideInst(); sn=3;
+
+  h+=_slideInfo(sn++,'Gestão de Carteira','A Suprema assume a responsabilidade integral pelo seu portfólio de marcas.',
+    `Transferir a gestão da sua carteira para a Suprema significa ter uma equipe especializada cuidando de cada processo, prazo e comunicação com o INPI. Nossa atuação começa pela <strong style="color:#fff">nomeação formal como procuradores</strong> em todos os seus processos ativos — garantindo acesso completo ao histórico e capacidade de agir imediatamente em qualquer situação.`,[
+    {tit:concedidos+' Marcas Concedidas',txt:'Assumimos a gestão de todos os registros já concedidos: anuidades, renovações e monitoramento contínuo de ameaças e conflitos.'},
+    {tit:andamento+' Processos em Andamento',txt:'Acompanhamos cada processo até a concessão final, respondendo a qualquer exigência, despacho ou comunicação do INPI.'},
+    {tit:'Monitoramento Estratégico',txt:totalMarcas+' processos sob vigilância constante. Alertas de prazos, publicações na RPI e ações preventivas realizadas proativamente pela Suprema.'},
+  ]);
+
+  const rows=[
+    {desc:'Taxa de Procuração INPI — '+totalProc+' processos ('+concedidos+' concedidos + '+andamento+' em andamento)',val:fmtBRL2(taxaTotal),pgto:pgtoTaxaStr},
+    {desc:'Honorários de Acompanhamento — '+andamento+' processos em andamento até concessão',val:fmtBRL2(honAnd),pgto:'À combinar'},
+    {desc:'Anuidade de Acompanhamento — '+concedidos+' marcas concedidas',val:fmtBRL2(anuidade),pgto:'À combinar'},
+  ];
+  const nota='* '+indeferidos+' processos indeferidos sem prazo para recurso estão incluídos no monitoramento informativo sem custo adicional. Em caso de indeferimento futuro de qualquer processo em andamento, o valor para Recurso ao INPI é de '+fmtBRL2(recurso)+' por processo.';
+
+  h+=_slideVal(sn++,'Gestão de Carteira — '+cliente,rows,nota);
+  h+=_slideCTA(sn,'Sua carteira protegida.<br>Sua marca em boas mãos.','Fale com a Suprema');
+
+  const a=document.getElementById('previewAreaGestao');
+  if(a)a.innerHTML=h;
+}
+function generateGestaoPDF(){printProposal('previewAreaGestao');}
 
 </script>
 </body></html>
