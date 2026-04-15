@@ -261,6 +261,20 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 .cert-toggle span{font-size:11px;color:var(--text3);}
 .country-remove-btn{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:4px 8px;line-height:1;transition:color .2s;margin-left:auto;align-self:flex-start;}
 .country-remove-btn:hover{color:var(--red);}
+.btn-combine{width:100%;padding:11px;border-radius:14px;border:1px solid rgba(230,0,0,.3);background:rgba(230,0,0,.07);color:rgba(255,100,100,.9);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:10px;letter-spacing:.3px;transition:all .2s;}
+.btn-combine:hover{background:rgba(230,0,0,.15);border-color:rgba(230,0,0,.5);}
+.btn-combine.added{background:rgba(230,0,0,.18);border-color:rgba(230,0,0,.6);color:#fff;}
+#combinedBar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#16161c,#1c1c24);border-top:2px solid rgba(230,0,0,.5);padding:14px 24px;display:none;align-items:center;justify-content:space-between;gap:12px;z-index:9000;box-shadow:0 -8px 32px rgba(0,0,0,.6);flex-wrap:wrap;}
+#combinedBar .cb-left{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;}
+#combinedBar .cb-title{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;}
+.cb-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(230,0,0,.15);border:1px solid rgba(230,0,0,.3);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:600;color:#ff8888;}
+.cb-tag .cb-remove{cursor:pointer;opacity:.6;font-size:14px;line-height:1;}
+.cb-tag .cb-remove:hover{opacity:1;}
+#combinedBar .cb-right{display:flex;gap:8px;align-items:center;}
+.btn-gen-combined{padding:10px 20px;border-radius:12px;border:none;background:linear-gradient(135deg,#e60000,#c00);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);box-shadow:0 4px 16px rgba(230,0,0,.35);transition:all .2s;white-space:nowrap;}
+.btn-gen-combined:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(230,0,0,.45);}
+.btn-clear-combined{padding:9px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.4);font-size:12px;cursor:pointer;font-family:var(--font);transition:all .2s;}
+.btn-clear-combined:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7);}
 </style>
 </head>
 <body>
@@ -738,7 +752,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
     <div class="field"><label class="field-label">Taxa Procuração (por processo)</label><input type="text" id="gestaoTaxaProc" value="R$ 490,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
-    <div class="field"><label class="field-label">Pgto das Taxas</label><select id="gestaoPgtoTaxa" onchange="recalcGestaoPreview()"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao10x" selected>Cartão 10x sem juros</option><option value="AVista">Cartão à Vista</option></select></div>
+    <div class="field"><label class="field-label">Pgto das Taxas</label><select id="gestaoPgtoTaxa" onchange="toggleParcelasGestao();recalcGestaoPreview()"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao" selected>Cartão de Crédito</option></select><div id="parcelasGestaoWrap" style="display:block;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoGestao" id="modoGestaoVista" value="vista" onchange="toggleParcelasNumGestao();recalcGestaoPreview()"><label for="modoGestaoVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoGestao" id="modoGestaoParc" value="parcelado" checked onchange="toggleParcelasNumGestao();recalcGestaoPreview()"><label for="modoGestaoParc">Parcelado</label></div></div><div id="parcelasGestaoNumWrap" style="display:block;margin-top:6px;"><input type="number" id="parcelasGestaoNum" placeholder="Nº de parcelas" value="10" min="2" max="24" oninput="recalcGestaoPreview()" style="width:100%;"></div></div></div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
     <div class="field"><label class="field-label">Honorários — Processos em Andamento</label><input type="text" id="gestaoHonAndamento" value="R$ 4.500,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
@@ -2195,6 +2209,7 @@ window.addEventListener('DOMContentLoaded',function(){
   });
   const lp=document.getElementById('homeLogoPat');
   if(lp)lp.src=IMG_LOGO_R;
+  _setupCombineButtons();
 });
 
 
@@ -4333,14 +4348,17 @@ function recalcGestaoPreview(){
   const recurso    = parseGestaoVal('gestaoRecurso');
 
   let pgtoTaxaStr;
-  if(pgtoTaxa==='Cartao10x'){
-    pgtoTaxaStr = 'Cartão 10x de '+fmtBRL2(taxaTotal/10)+' sem juros';
-  } else if(pgtoTaxa==='PIX'){
-    pgtoTaxaStr = 'PIX';
-  } else if(pgtoTaxa==='Boleto'){
-    pgtoTaxaStr = 'Boleto';
+  if(pgtoTaxa==='PIX'){
+    pgtoTaxaStr='PIX';
   } else {
-    pgtoTaxaStr = 'Cartão de Crédito';
+    const modo=document.querySelector('input[name="modoGestao"]:checked')?.value||'vista';
+    if(modo==='vista'){
+      pgtoTaxaStr=pgtoTaxa==='Boleto'?'Boleto à Vista':'Cartão de Crédito à Vista';
+    } else {
+      const n=parseInt(document.getElementById('parcelasGestaoNum')?.value)||0;
+      if(n<2){pgtoTaxaStr=pgtoTaxa==='Boleto'?'Boleto Parcelado':'Cartão Parcelado';}
+      else{pgtoTaxaStr=pgtoTaxa==='Boleto'?'Boleto em '+n+'x de '+fmtBRL2(taxaTotal/n):'Cartão de Crédito em '+n+'x de '+fmtBRL2(taxaTotal/n)+' sem juros';}
+    }
   }
 
   let h='', sn=1;
@@ -4370,5 +4388,99 @@ function recalcGestaoPreview(){
 }
 function generateGestaoPDF(){printProposal('previewAreaGestao');}
 
+function toggleParcelasGestao(){
+  const v=document.getElementById('gestaoPgtoTaxa').value;
+  const w=document.getElementById('parcelasGestaoWrap');
+  if(w)w.style.display=(v==='Boleto'||v==='Cartao')?'block':'none';
+  toggleParcelasNumGestao();
+}
+function toggleParcelasNumGestao(){
+  const modo=document.querySelector('input[name="modoGestao"]:checked')?.value||'vista';
+  const w=document.getElementById('parcelasGestaoNumWrap');
+  if(w)w.style.display=modo==='parcelado'?'block':'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  PROPOSTA COMBINADA
+// ═══════════════════════════════════════════════════════════════
+var _combinedQueue={};
+
+function addToCombined(label,previewAreaId){
+  const el=document.getElementById(previewAreaId);
+  if(!el||!el.innerHTML.trim()){alert('Gere o preview deste serviço antes de adicionar à proposta combinada.');return;}
+  _combinedQueue[label]=el.innerHTML;
+  _updateCombinedBar();
+  const btn=document.querySelector('[data-combine-label="'+CSS.escape(label)+'"]');
+  if(btn){btn.textContent='✓ Adicionado';btn.classList.add('added');}
+}
+
+function removeFromCombined(label){
+  delete _combinedQueue[label];
+  _updateCombinedBar();
+  document.querySelectorAll('.btn-combine').forEach(function(btn){
+    if(btn.dataset.combineLabel===label){btn.textContent='+ Adicionar à Proposta Combinada';btn.classList.remove('added');}
+  });
+}
+
+function clearCombined(){
+  _combinedQueue={};
+  _updateCombinedBar();
+  document.querySelectorAll('.btn-combine').forEach(function(btn){
+    btn.textContent='+ Adicionar à Proposta Combinada';btn.classList.remove('added');
+  });
+}
+
+function _updateCombinedBar(){
+  const keys=Object.keys(_combinedQueue);
+  const bar=document.getElementById('combinedBar');
+  const tagList=document.getElementById('combinedTagList');
+  if(!bar)return;
+  if(keys.length===0){bar.style.display='none';return;}
+  bar.style.display='flex';
+  tagList.innerHTML=keys.map(function(k){
+    return '<span class="cb-tag">'+k+' <span class="cb-remove" onclick="removeFromCombined(\''+k.replace(/'/g,"\\'")+'\')">&times;</span></span>';
+  }).join('');
+}
+
+function generateCombinedPDF(){
+  const keys=Object.keys(_combinedQueue);
+  if(keys.length===0)return;
+  let tmp=document.getElementById('_combinedPreviewArea');
+  if(!tmp){
+    tmp=document.createElement('div');
+    tmp.id='_combinedPreviewArea';
+    tmp.style.cssText='position:absolute;left:-9999px;top:0;';
+    document.body.appendChild(tmp);
+  }
+  tmp.innerHTML=keys.map(function(k){return _combinedQueue[k];}).join('');
+  printProposal('_combinedPreviewArea');
+}
+
+function _setupCombineButtons(){
+  document.querySelectorAll('[id^="generator"][id$="Screen"]').forEach(function(screen){
+    var preview=screen.querySelector('[id^="previewArea"]');
+    if(!preview)return;
+    var label=(screen.querySelector('.header-sub')||{}).textContent||screen.id;
+    label=label.trim();
+    var btn=document.createElement('button');
+    btn.className='btn-combine';
+    btn.textContent='+ Adicionar à Proposta Combinada';
+    btn.dataset.combineLabel=label;
+    btn.onclick=function(){addToCombined(label,preview.id);};
+    var genBtn=screen.querySelector('.btn-generate');
+    if(genBtn)genBtn.insertAdjacentElement('afterend',btn);
+  });
+}
+
 </script>
+<div id="combinedBar">
+  <div class="cb-left">
+    <span class="cb-title">Proposta Combinada</span>
+    <div id="combinedTagList" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+  </div>
+  <div class="cb-right">
+    <button class="btn-clear-combined" onclick="clearCombined()">Limpar</button>
+    <button class="btn-gen-combined" onclick="generateCombinedPDF()">Gerar PDF Combinado</button>
+  </div>
+</div>
 </body></html>
