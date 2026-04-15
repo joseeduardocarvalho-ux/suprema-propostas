@@ -756,6 +756,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-section glass" style="margin-top:24px;">
   <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="pacoteCliente" value="Cliente" oninput="recalcPacotePreview()" onfocus="this.select()"></div>
   <div class="field"><label class="field-label">Serviços inclusos (aparece no slide)</label><input type="text" id="pacoteServicos" value="Registro de Marca Nacional + Direito Autoral" oninput="recalcPacotePreview()" onfocus="this.select()"></div>
+  <div class="field"><label class="field-label">Logo do Cliente (opcional)</label><input type="file" id="clientLogoPacote" accept="image/*" onchange="handleLogoUploadPacote(event)" style="display:none"><div id="logoDropzonePacote" class="logo-upload-area" onclick="document.getElementById('clientLogoPacote').click()">Clique para enviar a logo do cliente</div><div id="logoPreviewBoxPacote" style="display:none;text-align:center;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(0,0,0,.15);"><img id="logoThumbPacote" style="max-height:60px;border-radius:8px;"><br><span class="logo-change-btn" onclick="resetLogoPacote()">Trocar</span></div></div>
   <div class="field">
     <label class="field-label">Itens do Investimento</label>
     <div style="display:grid;grid-template-columns:1fr 120px 190px 36px;gap:8px;margin-bottom:6px;padding:0 2px;">
@@ -4474,13 +4475,46 @@ function getPacoteRows(){
   return rows;
 }
 
+let clientLogoDataPacote=null;
+function handleLogoUploadPacote(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=function(ev){
+    clientLogoDataPacote=ev.target.result;
+    document.getElementById('logoThumbPacote').src=clientLogoDataPacote;
+    document.getElementById('logoPreviewBoxPacote').style.display='block';
+    document.getElementById('logoDropzonePacote').style.display='none';
+    recalcPacotePreview();
+  };
+  r.readAsDataURL(f);
+}
+function resetLogoPacote(){
+  clientLogoDataPacote=null;
+  document.getElementById('clientLogoPacote').value='';
+  document.getElementById('logoPreviewBoxPacote').style.display='none';
+  document.getElementById('logoDropzonePacote').style.display='block';
+  recalcPacotePreview();
+}
 function recalcPacotePreview(){
   const cliente=document.getElementById('pacoteCliente')?.value||'Cliente';
   const servicos=document.getElementById('pacoteServicos')?.value||'Servi\u00e7os Suprema';
   const rows=getPacoteRows();
   let h='',sn=1;
 
-  h+=_slideCover('Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.',servicos+' \u2014 Suprema Propriedade Intelectual');
+  const _coverSub=servicos+' \u2014 Suprema Propriedade Intelectual';
+  if(clientLogoDataPacote){
+    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE 1</div><div class="slide slide-cover">
+      <img class="cv-logo" src="${IMG_LOGO_W}">
+      <div style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:clamp(6px,.8vw,10px);padding:clamp(4px,.6vw,8px) clamp(8px,1.2vw,14px);display:flex;align-items:center;">
+        <img src="${clientLogoDataPacote}" style="max-height:clamp(18px,2.6vw,32px);max-width:clamp(50px,7vw,90px);object-fit:contain;">
+      </div>
+      <div class="cv-tagline">Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.</div>
+      <div class="cv-sub">${_coverSub}</div>
+      <div class="cv-footer">Suprema All Rights Reserved</div>
+    </div></div>`;
+  } else {
+    h+=_slideCover('Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.',_coverSub);
+  }
   h+=_slideInst();sn=3;
 
   const servList=servicos.split(/\s*\+\s*/).map(function(s){return s.trim();}).filter(Boolean);
