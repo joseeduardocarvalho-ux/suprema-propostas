@@ -3526,11 +3526,19 @@ function _slideInfo(sn,label,titulo,corpo,cards){
   </div></div>`;
 }
 
-function _slideVal(sn,titulo,rows,nota){
+function _slideVal(sn,titulo,rows,nota,clientLogo){
   const rowsHtml=rows.map(r=>`<tr><td>${r.desc}</td><td class="vb">${r.val}</td><td>${r.pgto}</td></tr>`).join('');
+  const titleBlock=clientLogo
+    ?`<div style="width:92%;display:flex;align-items:center;gap:clamp(8px,1.2vw,14px);margin-bottom:clamp(10px,1.8vw,20px);">
+        <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:clamp(4px,.6vw,8px);padding:clamp(4px,.6vw,7px) clamp(7px,1vw,12px);display:flex;align-items:center;flex-shrink:0;">
+          <img src="${clientLogo}" style="max-height:clamp(18px,2.8vw,34px);max-width:clamp(40px,6vw,80px);object-fit:contain;">
+        </div>
+        <div class="vl-title" style="margin-bottom:0;width:auto;flex:1;">Valores &mdash; <span>${titulo}</span></div>
+      </div>`
+    :`<div class="vl-title">Valores &mdash; <span>${titulo}</span></div>`;
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide slide-val">
     <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Investimento</span>
-    <div class="vl-title">Valores &mdash; <span>${titulo}</span></div>
+    ${titleBlock}
     <table class="vtbl"><thead><tr><th style="width:50%">Serviço</th><th style="width:22%">Valor</th><th>Pagamento</th></tr></thead><tbody>${rowsHtml}</tbody></table>
     ${nota?`<div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">${nota}</div>`:''}
   </div></div>`;
@@ -4529,7 +4537,8 @@ function recalcPacotePreview(){
 
   if(rows.length){
     h+=_slideVal(sn++,'Investimento \u2014 '+cliente,rows,
-      '* Valores referentes ao pacote completo de servi\u00e7os conforme descrito nesta proposta. Demais custos processuais est\u00e3o detalhados acima.');
+      '* Valores referentes ao pacote completo de servi\u00e7os conforme descrito nesta proposta. Demais custos processuais est\u00e3o detalhados acima.',
+      clientLogoDataPacote||null);
   }
 
   h+=_slideCTA(sn,'Prote\u00e7\u00e3o completa.<br>Um \u00fanico parceiro.','Fale com a Suprema');
