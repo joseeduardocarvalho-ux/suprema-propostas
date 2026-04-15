@@ -4510,19 +4510,7 @@ function recalcPacotePreview(){
   let h='',sn=1;
 
   const _coverSub=servicos+' \u2014 Suprema Propriedade Intelectual';
-  if(clientLogoDataPacote){
-    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE 1</div><div class="slide slide-cover">
-      <img class="cv-logo" src="${IMG_LOGO_W}">
-      <div style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:clamp(6px,.8vw,10px);padding:clamp(4px,.6vw,8px) clamp(8px,1.2vw,14px);display:flex;align-items:center;">
-        <img src="${clientLogoDataPacote}" style="max-height:clamp(18px,2.6vw,32px);max-width:clamp(50px,7vw,90px);object-fit:contain;">
-      </div>
-      <div class="cv-tagline">Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.</div>
-      <div class="cv-sub">${_coverSub}</div>
-      <div class="cv-footer">Suprema All Rights Reserved</div>
-    </div></div>`;
-  } else {
-    h+=_slideCover('Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.',_coverSub);
-  }
+  h+=_slideCover('Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.',_coverSub);
   h+=_slideInst();sn=3;
 
   const servList=servicos.split(/\s*\+\s*/).map(function(s){return s.trim();}).filter(Boolean);
