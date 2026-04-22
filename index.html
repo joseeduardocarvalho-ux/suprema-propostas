@@ -445,6 +445,11 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
   <div class="svc-info"><div class="svc-name">Alteração de Nome / Sede</div><div class="svc-desc">Atualização de dados do titular no INPI</div></div>
   <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
 </div>
+<div class="svc-card active" onclick="openService('adicional')">
+  <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+  <div class="svc-info"><div class="svc-name">Serviços Adicionais</div><div class="svc-desc">Oposição, recurso, nulidade, prorrogação e demais serviços processuais com prazo e valor personalizados</div></div>
+  <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
+</div>
 <div class="svc-card active" onclick="openService('pacote')">
   <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/></svg></div>
   <div class="svc-info"><div class="svc-name">Pacote Personalizado</div><div class="svc-desc">Combine múltiplos serviços em uma única proposta com valores customizados</div></div>
@@ -749,6 +754,34 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 </div></div><!-- /generatorAlteracaoScreen -->
 
 <!-- ===== PARCERIA SCREEN ===== -->
+<div id="generatorAdicionalScreen" style="display:none">
+<div class="page">
+<button class="btn-back" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Todos os serviços</button>
+<div class="header"><div class="header-logo"><img id="homeLogoAdicional"></div><div class="header-title">Gerador de Propostas</div><div class="header-sub">Serviços Adicionais</div></div>
+<div class="form-section glass" style="margin-top:24px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="adicionalCliente" value="Cliente" oninput="recalcAdicionalPreview()" onfocus="this.select()"></div>
+    <div class="field"><label class="field-label">Tagline da Capa (editável)</label><input type="text" id="adicionalTagline" value="Proteção em todas as etapas do seu registro." oninput="recalcAdicionalPreview()" onfocus="this.select()"></div>
+  </div>
+  <div class="field"><label class="field-label">Logo do Cliente (opcional)</label><input type="file" id="clientLogoAdicional" accept="image/*" onchange="handleLogoUploadAdicional(event)" style="display:none"><div id="logoDropzoneAdicional" class="logo-upload-area" onclick="document.getElementById('clientLogoAdicional').click()">Clique para enviar a logo do cliente</div><div id="logoPreviewBoxAdicional" style="display:none;text-align:center;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(0,0,0,.15);"><img id="logoThumbAdicional" style="max-height:60px;border-radius:8px;"><br><span class="logo-change-btn" onclick="resetLogoAdicional()">Trocar</span></div></div>
+  <div class="field">
+    <label class="field-label">Serviços / Itens</label>
+    <div style="display:grid;grid-template-columns:1fr 130px 100px 155px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Serviço / Descrição</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Prazo</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Pagamento</span>
+      <span></span>
+    </div>
+    <div id="adicionalRowsWrap"></div>
+    <button type="button" class="btn-add-row" onclick="addAdicionalRow('','','','')">+ Adicionar Serviço</button>
+  </div>
+</div>
+<div style="margin-top:16px;" id="previewAreaAdicional"></div>
+<button class="btn-generate" onclick="generateAdicionalPDF()">Gerar PDF da Proposta</button>
+</div>
+</div><!-- /generatorAdicionalScreen -->
+
 <div id="generatorPacoteScreen" style="display:none">
 <div class="page">
 <button class="btn-back" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Todos os serviços</button>
@@ -1712,6 +1745,14 @@ function openService(svc){
   } else if(svc==='alteracao'){
     document.getElementById('generatorAlteracaoScreen').style.display='block';
     recalcAlteracaoPreview();
+  } else if(svc==='adicional'){
+    document.getElementById('generatorAdicionalScreen').style.display='block';
+    if(document.getElementById('adicionalRowsWrap')&&!document.getElementById('adicionalRowsWrap').children.length){
+      addAdicionalRow('','','','');
+      addAdicionalRow('','','','');
+      addAdicionalRow('','','','');
+    }
+    recalcAdicionalPreview();
   } else if(svc==='pacote'){
     document.getElementById('generatorPacoteScreen').style.display='block';
     if(document.getElementById('pacoteRowsWrap')&&!document.getElementById('pacoteRowsWrap').children.length){
@@ -1750,6 +1791,7 @@ function goHome(){
   document.getElementById('generatorManifestacaoScreen').style.display='none';
   document.getElementById('generatorContrarazoesScreen').style.display='none';
   document.getElementById('generatorNotificacaoScreen').style.display='none';
+  document.getElementById('generatorAdicionalScreen').style.display='none';
   document.getElementById('generatorPacoteScreen').style.display='none';
   document.getElementById('generatorGestaoScreen').style.display='none';
   document.getElementById('generatorParceiraScreen').style.display='none';
@@ -2248,7 +2290,7 @@ function generateIntlPDF(){printProposal('previewAreaIntl');}
 window.addEventListener('DOMContentLoaded',function(){
   const li=document.getElementById('homeLogoIntl');
   if(li)li.src=IMG_LOGO_R;
-  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao','homeLogoGestao','homeLogoPacote'].forEach(id=>{
+  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao','homeLogoGestao','homeLogoPacote','homeLogoAdicional'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.src=IMG_LOGO_R;
   });
@@ -4444,6 +4486,103 @@ function generateGestaoPDF(){printProposal('previewAreaGestao');}
 // ═══════════════════════════════════════════════════════════════
 //  PACOTE PERSONALIZADO
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  SERVIÇOS ADICIONAIS
+// ═══════════════════════════════════════════════════════════════
+let clientLogoDataAdicional=null;
+function handleLogoUploadAdicional(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=function(ev){
+    clientLogoDataAdicional=ev.target.result;
+    document.getElementById('logoThumbAdicional').src=clientLogoDataAdicional;
+    document.getElementById('logoPreviewBoxAdicional').style.display='block';
+    document.getElementById('logoDropzoneAdicional').style.display='none';
+    recalcAdicionalPreview();
+  };
+  r.readAsDataURL(f);
+}
+function resetLogoAdicional(){
+  clientLogoDataAdicional=null;
+  document.getElementById('clientLogoAdicional').value='';
+  document.getElementById('logoPreviewBoxAdicional').style.display='none';
+  document.getElementById('logoDropzoneAdicional').style.display='block';
+  recalcAdicionalPreview();
+}
+
+var _adicionalRowCount=0;
+function addAdicionalRow(desc,prazo,val,pgto){
+  _adicionalRowCount++;
+  const n=_adicionalRowCount;
+  const wrap=document.getElementById('adicionalRowsWrap');
+  if(!wrap)return;
+  const row=document.createElement('div');
+  row.id='adicionalRow_'+n;
+  row.style.cssText='display:grid;grid-template-columns:1fr 130px 100px 155px 34px;gap:8px;margin-bottom:8px;align-items:start;';
+  row.innerHTML=
+    '<input type="text" id="adicionalDesc_'+n+'" value="'+escPacote(desc)+'" placeholder="Ex: Recurso contra Indeferimento" oninput="recalcAdicionalPreview()" style="margin:0;">'
+   +'<input type="text" id="adicionalPrazo_'+n+'" value="'+escPacote(prazo)+'" placeholder="Ex: 60 dias" oninput="recalcAdicionalPreview()" style="margin:0;">'
+   +'<input type="text" id="adicionalVal_'+n+'" value="'+escPacote(val)+'" placeholder="R$ 0,00" oninput="fmtCurrency(this);recalcAdicionalPreview()" onfocus="this.select()" style="margin:0;">'
+   +'<input type="text" id="adicionalPgto_'+n+'" value="'+escPacote(pgto)+'" placeholder="PIX / Boleto..." oninput="recalcAdicionalPreview()" style="margin:0;">'
+   +'<button class="pacote-row-remove" onclick="removeAdicionalRow('+n+')">\xd7</button>';
+  wrap.appendChild(row);
+  recalcAdicionalPreview();
+}
+function removeAdicionalRow(n){
+  const r=document.getElementById('adicionalRow_'+n);
+  if(r)r.remove();
+  recalcAdicionalPreview();
+}
+function getAdicionalRows(){
+  const rows=[];
+  document.querySelectorAll('[id^="adicionalRow_"]').forEach(function(row){
+    const n=row.id.split('_')[1];
+    const desc=document.getElementById('adicionalDesc_'+n)?.value||'';
+    const prazo=document.getElementById('adicionalPrazo_'+n)?.value||'';
+    const val=document.getElementById('adicionalVal_'+n)?.value||'';
+    const pgto=document.getElementById('adicionalPgto_'+n)?.value||'';
+    if(desc||val)rows.push({desc,prazo,val,pgto});
+  });
+  return rows;
+}
+
+function recalcAdicionalPreview(){
+  const cliente  = document.getElementById('adicionalCliente')?.value||'Cliente';
+  const tagline  = document.getElementById('adicionalTagline')?.value||'Prote\u00e7\u00e3o em todas as etapas.';
+  const rows     = getAdicionalRows();
+  let h='', sn=1;
+
+  h+=_slideCover(tagline.replace(/\.\s*/g,'.<br>'), cliente+' \u2014 Suprema Propriedade Intelectual');
+  h+=_slideInst(); sn=3;
+
+  h+=_slideInfo(sn++,'Servi\u00e7os Adicionais','Suporte especializado em cada etapa do seu processo no INPI.',
+    'Al\u00e9m do registro, existem situa\u00e7\u00f5es que exigem a\u00e7\u00e3o imediata e conhecimento t\u00e9cnico aprofundado. A Suprema atua com agilidade e precis\u00e3o em cada um desses procedimentos, garantindo que seus direitos sejam defendidos em qualquer fase do processo.',
+    [{tit:'Prazos Legais',txt:'Cada procedimento administrativo possui prazo improrrog\u00e1vel. A Suprema monitora e age dentro do tempo legal necess\u00e1rio para proteger seus direitos.'},
+     {tit:'Especialistas Dedicados',txt:'Cada servi\u00e7o \u00e9 conduzido por profissionais especializados na \u00e1rea espec\u00edfica do seu processo, garantindo a melhor estrat\u00e9gia.'},
+     {tit:'Transpar\u00eancia Total',txt:'Voc\u00ea acompanha cada etapa em tempo real. Informamos o status, prazos e resultados de forma clara e objetiva.'}]
+  );
+
+  if(rows.length){
+    const logoBox=clientLogoDataAdicional
+      ?`<div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:clamp(4px,.6vw,8px);padding:clamp(4px,.6vw,7px) clamp(7px,1vw,12px);display:inline-flex;align-items:center;margin-bottom:clamp(6px,1vw,12px);"><img src="${clientLogoDataAdicional}" style="max-height:clamp(18px,2.8vw,34px);max-width:clamp(40px,6vw,80px);object-fit:contain;"></div>`
+      :'';
+    const rowsHtml=rows.map(r=>`<tr><td>${r.desc}</td><td style="color:rgba(255,255,255,.5);font-style:italic;">${r.prazo}</td><td class="vb">${r.val}</td><td>${r.pgto}</td></tr>`).join('');
+    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-val">
+      <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Investimento</span>
+      ${logoBox}
+      <div class="vl-title" style="${clientLogoDataAdicional?'margin-top:0;':''}">Valores \u2014 <span>${cliente}</span></div>
+      <table class="vtbl"><thead><tr><th style="width:38%">Servi\u00e7o</th><th style="width:16%">Prazo</th><th style="width:18%">Valor</th><th>Pagamento</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+      <div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-style:italic;line-height:1.6;">* Prazos indicados s\u00e3o estimativas com base nos procedimentos do INPI e podem variar conforme a complexidade de cada caso.</div>
+    </div></div>`;
+  }
+
+  h+=_slideCTA(sn,'Cada etapa protegida.<br>Cada direito garantido.','Fale com a Suprema');
+
+  const a=document.getElementById('previewAreaAdicional');
+  if(a)a.innerHTML=h;
+}
+function generateAdicionalPDF(){printProposal('previewAreaAdicional');}
+
 var _pacoteRowCount=0;
 
 function escPacote(s){return(s||'').replace(/"/g,'&quot;');}
