@@ -821,7 +821,8 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <button class="btn-back" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Todos os serviços</button>
 <div class="header"><div class="header-logo"><img id="homeLogoGestao"></div><div class="header-title">Gerador de Propostas</div><div class="header-sub">Gestão de Carteira de Marcas</div></div>
 <div class="form-section glass" style="margin-top:24px;">
-  <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="gestaoCliente" value="30praum" oninput="recalcGestaoPreview()" onfocus="this.select()"></div>
+  <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="gestaoCliente" value="Cliente" oninput="recalcGestaoPreview()" onfocus="this.select()"></div>
+  <div class="field"><label class="field-label">Logo do Cliente (opcional)</label><input type="file" id="clientLogoGestao" accept="image/*" onchange="handleLogoUploadGestao(event)" style="display:none"><div id="logoDropzoneGestao" class="logo-upload-area" onclick="document.getElementById('clientLogoGestao').click()">Clique para enviar a logo do cliente</div><div id="logoPreviewBoxGestao" style="display:none;text-align:center;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(0,0,0,.15);"><img id="logoThumbGestao" style="max-height:60px;border-radius:8px;"><br><span class="logo-change-btn" onclick="resetLogoGestao()">Trocar</span></div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
     <div class="field"><label class="field-label">Processos Concedidos</label><input type="number" id="gestaoConcedidos" value="19" min="0" oninput="recalcGestaoPreview()"></div>
     <div class="field"><label class="field-label">Em Andamento</label><input type="number" id="gestaoAndamento" value="6" min="0" oninput="recalcGestaoPreview()"></div>
@@ -3552,6 +3553,55 @@ function fmtCurrencyGeneric(el){
   el.value=fmtBRL(parseInt(raw));
 }
 
+function _slideTransparencia(sn){
+  return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(10px,1.5vw,16px);">
+    <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
+    <span style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Transpari\u00eancia</span>
+    <div>
+      <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:clamp(4px,.6vw,8px);">Transpari\u00eancia no Processo</div>
+      <div style="font-size:clamp(10px,1.55vw,20px);font-weight:800;color:#fff;line-height:1.2;">O que pode surgir<br>durante a gest\u00e3o?</div>
+    </div>
+    <div style="font-size:clamp(6.5px,.9vw,11px);color:rgba(255,255,255,.65);line-height:1.7;max-width:640px;">Durante a vig\u00eancia dos registros e o andamento dos pedidos pendentes, podem surgir eventos que exigem atua\u00e7\u00e3o t\u00e9cnica espec\u00edfica \u2014 como oposi\u00e7\u00f5es de terceiros, recursos, manifesta\u00e7\u00f5es, prorroga\u00e7\u00f5es de registro e altera\u00e7\u00f5es cadastrais. Esses procedimentos <strong style="color:#fff">n\u00e3o est\u00e3o inclu\u00eddos no valor base da gest\u00e3o</strong> e s\u00e3o acionados apenas quando necess\u00e1rios, com cobran\u00e7a individual conforme tabela de servi\u00e7os adicionais. Em todos os casos, a Suprema apresentar\u00e1 or\u00e7amento detalhado e aguardar\u00e1 aprova\u00e7\u00e3o antes da execu\u00e7\u00e3o.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,1.2vw,16px);flex:1;">
+      <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.5vw,6px);">
+        <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Or\u00e7amento Pr\u00e9vio</div>
+        <div style="font-size:clamp(6px,.85vw,10.5px);color:rgba(255,255,255,.75);line-height:1.6;">Nenhum procedimento adicional \u00e9 iniciado sem apresenta\u00e7\u00e3o de or\u00e7amento e aprova\u00e7\u00e3o expressa do cliente.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.5vw,6px);">
+        <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Acionamento Pontual</div>
+        <div style="font-size:clamp(6px,.85vw,10.5px);color:rgba(255,255,255,.75);line-height:1.6;">Servi\u00e7os adicionais s\u00e3o cobrados individualmente, apenas quando necess\u00e1rios. Voc\u00ea paga somente pelo que realmente acontecer.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.5vw,6px);">
+        <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Tabela Fixa</div>
+        <div style="font-size:clamp(6px,.85vw,10.5px);color:rgba(255,255,255,.75);line-height:1.6;">Todos os valores para procedimentos adicionais est\u00e3o definidos na tabela a seguir \u2014 sem surpresas, sem custo oculto.</div>
+      </div>
+    </div>
+  </div></div>`;
+}
+
+function _slideServAdicionaisGestao(sn){
+  const _rows=[
+    {d:'Expedi\u00e7\u00e3o de Certificado',v:'R$ 355,00'},
+    {d:'Prorroga\u00e7\u00e3o de Registro',v:'R$ 2.500,00'},
+    {d:'Recurso contra Indeferimento',v:'R$ 980,00'},
+    {d:'Manifesta\u00e7\u00e3o \u00e0 Oposi\u00e7\u00e3o',v:'R$ 790,00'},
+    {d:'Contraraz\u00f5es',v:'R$ 790,00'},
+    {d:'Oposi\u00e7\u00e3o contra Terceiros',v:'R$ 960,00'},
+    {d:'Nulidade contra Terceiros',v:'R$ 1.025,00'},
+    {d:'Caducidade contra Terceiros',v:'R$ 995,00'},
+    {d:'Altera\u00e7\u00e3o Nome/Sede',v:'R$ 550,00'},
+    {d:'Cess\u00e3o por Transfer\u00eancia',v:'R$ 970,00'},
+    {d:'Notifica\u00e7\u00e3o Extrajudicial',v:'R$ 1.275,00'},
+  ];
+  const rHtml=_rows.map(r=>`<tr><td>${r.d}</td><td class="vb">${r.v}</td><td style="color:rgba(255,255,255,.4);font-style:italic;">Por acionamento</td></tr>`).join('');
+  return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide slide-val">
+    <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Servi\u00e7os Adicionais</span>
+    <div class="vl-title">Tabela de Servi\u00e7os &mdash; <span>Acionamento Pontual</span></div>
+    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobran\u00e7a</th></tr></thead><tbody>${rHtml}</tbody></table>
+    <div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">* Estes servi\u00e7os s\u00e3o acionados exclusivamente quando necess\u00e1rios. Cada procedimento ser\u00e1 or\u00e7ado individualmente e executado somente ap\u00f3s aprova\u00e7\u00e3o do cliente.</div>
+  </div></div>`;
+}
+
 function _slideCover(tagline,sub){
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE 1</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">${tagline}</div><div class="cv-sub">${sub}</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
 }
@@ -3567,16 +3617,20 @@ function _slideInst(){
   </div></div>`;
 }
 
-function _slideInfo(sn,label,titulo,corpo,cards){
+function _slideInfo(sn,label,titulo,corpo,cards,clientLogo){
   const cardsHtml=cards.map(c=>`
     <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.5vw,6px);">
       <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">${c.tit}</div>
       <div style="font-size:clamp(6px,.85vw,10.5px);color:rgba(255,255,255,.75);line-height:1.6;">${c.txt}</div>
     </div>`).join('');
+  const logoCardHtml=clientLogo
+    ?`<div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.95);border-radius:clamp(4px,.6vw,8px);padding:clamp(3px,.5vw,6px) clamp(7px,1.1vw,14px);margin-bottom:clamp(6px,.8vw,10px);"><img src="${clientLogo}" style="max-height:clamp(14px,2.2vw,28px);max-width:clamp(40px,6.5vw,90px);object-fit:contain;"></div>`
+    :'';
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(10px,1.5vw,16px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
     <span style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">${label}</span>
     <div>
+      ${logoCardHtml}
       <div style="font-size:clamp(5px,.65vw,8px);color:var(--red);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:clamp(4px,.6vw,8px);">${label}</div>
       <div style="font-size:clamp(10px,1.55vw,20px);font-weight:800;color:#fff;line-height:1.2;">${titulo}</div>
     </div>
@@ -4437,6 +4491,27 @@ function generateAlteracaoPDF(){printProposal('previewAreaAlteracao');}
 // ═══════════════════════════════════════════════════════════════
 //  GESTÃO DE CARTEIRA DE MARCAS
 // ═══════════════════════════════════════════════════════════════
+let clientLogoDataGestao=null;
+function handleLogoUploadGestao(e){
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=function(ev){
+    clientLogoDataGestao=ev.target.result;
+    document.getElementById('logoThumbGestao').src=clientLogoDataGestao;
+    document.getElementById('logoPreviewBoxGestao').style.display='block';
+    document.getElementById('logoDropzoneGestao').style.display='none';
+    recalcGestaoPreview();
+  };
+  r.readAsDataURL(f);
+}
+function resetLogoGestao(){
+  clientLogoDataGestao=null;
+  document.getElementById('clientLogoGestao').value='';
+  document.getElementById('logoPreviewBoxGestao').style.display='none';
+  document.getElementById('logoDropzoneGestao').style.display='block';
+  recalcGestaoPreview();
+}
 function parseGestaoVal(id){
   const raw=(document.getElementById(id).value||'0').replace(/[R$\s.]/g,'').replace(',','.');
   return parseFloat(raw)||0;
@@ -4451,6 +4526,7 @@ function recalcGestaoPreview(){
   const indeferidos= parseInt(document.getElementById('gestaoIndeferidos').value)||0;
   const totalProc  = concedidos + andamento;
   const totalMarcas= concedidos + andamento + indeferidos;
+  const procLabel  = totalProc===1?'1 processo':totalProc+' processos';
 
   const pgtoTaxa   = document.getElementById('gestaoPgtoTaxa').value;
   const taxaUnit   = parseGestaoVal('gestaoTaxaProc');
@@ -4475,24 +4551,36 @@ function recalcGestaoPreview(){
 
   let h='', sn=1;
 
+  // Slide 1 — Capa
   h+=_slideCover('Gestão Completa<br>da Sua Carteira de Marcas.', cliente+' — Suprema Propriedade Intelectual');
+  // Slide 2 — Quem Somos
   h+=_slideInst(); sn=3;
 
+  // Slide 3 — Institucional (com logo do cliente)
   h+=_slideInfo(sn++,'Gestão de Carteira','A Suprema assume a responsabilidade integral pelo seu portfólio de marcas.',
     `Transferir a gestão da sua carteira para a Suprema significa ter uma equipe especializada cuidando de cada processo, prazo e comunicação com o INPI. Nossa atuação começa pela <strong style="color:#fff">nomeação formal como procuradores</strong> em todos os seus processos ativos — garantindo acesso completo ao histórico e capacidade de agir imediatamente em qualquer situação.`,[
     {tit:concedidos+' Marcas Concedidas',txt:'Assumimos a gestão de todos os registros já concedidos: anuidades, renovações e monitoramento contínuo de ameaças e conflitos.'},
     {tit:andamento+' Processos em Andamento',txt:'Acompanhamos cada processo até a concessão final, respondendo a qualquer exigência, despacho ou comunicação do INPI.'},
     {tit:'Monitoramento Estratégico',txt:totalMarcas+' processos sob vigilância constante. Alertas de prazos, publicações na RPI e ações preventivas realizadas proativamente pela Suprema.'},
-  ]);
+  ],clientLogoDataGestao||null);
 
+  // Slide 4 — Investimento
   const rows=[
-    {desc:'Taxa de Procuração INPI — '+totalProc+' processos ('+concedidos+' concedidos + '+andamento+' em andamento)',val:fmtBRL2(taxaTotal),pgto:pgtoTaxaStr},
-    {desc:'Honorários de Acompanhamento — '+andamento+' processos em andamento até concessão',val:fmtBRL2(honAnd),pgto:'À combinar'},
-    {desc:'Anuidade de Acompanhamento — '+concedidos+' marcas concedidas',val:fmtBRL2(anuidade),pgto:'À combinar'},
+    {desc:'Transferência de Titularidade do Procurador ('+procLabel+')',val:fmtBRL2(taxaTotal),pgto:pgtoTaxaStr},
+    {desc:'Honorários de Acompanhamento — '+andamento+(andamento===1?' processo':' processos')+' em andamento até concessão',val:fmtBRL2(honAnd),pgto:'À combinar'},
+    {desc:'Anuidade de Acompanhamento — '+concedidos+(concedidos===1?' marca concedida':' marcas concedidas'),val:fmtBRL2(anuidade),pgto:'À combinar'},
   ];
-  const nota='* '+indeferidos+' processos indeferidos sem prazo para recurso estão incluídos no monitoramento informativo sem custo adicional. Em caso de indeferimento futuro de qualquer processo em andamento, o valor para Recurso ao INPI é de '+fmtBRL2(recurso)+' por processo.';
+  const nota='* '+indeferidos+(indeferidos===1?' processo indeferido sem prazo para recurso está incluído':' processos indeferidos sem prazo para recurso estão incluídos')+' no monitoramento informativo sem custo adicional. Em caso de indeferimento futuro de qualquer processo em andamento, o valor para Recurso ao INPI é de '+fmtBRL2(recurso)+' por processo.';
 
-  h+=_slideVal(sn++,'Gestão de Carteira — '+cliente,rows,nota);
+  h+=_slideVal(sn++,'Gestão de Carteira — '+procLabel,rows,nota,clientLogoDataGestao||null);
+
+  // Slide 5 — Transparência no Processo
+  h+=_slideTransparencia(sn++);
+
+  // Slide 6 — Serviços Adicionais
+  h+=_slideServAdicionaisGestao(sn++);
+
+  // Slide 7 — CTA
   h+=_slideCTA(sn,'Sua carteira protegida.<br>Sua marca em boas mãos.','Fale com a Suprema');
 
   const a=document.getElementById('previewAreaGestao');
