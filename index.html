@@ -3625,29 +3625,38 @@ function _slideTransparencia(sn){
   </div></div>`;
 }
 
+// Retorna 2 slides (6+5 linhas) — caller deve incrementar sn+=2
 function _slideServAdicionaisGestao(sn){
   const _rows=[
-    {d:'Expedi\u00e7\u00e3o de Certificado',v:'R$ 355,00'},
-    {d:'Prorroga\u00e7\u00e3o de Registro',v:'R$ 2.500,00'},
+    {d:'Expedição de Certificado',v:'R$ 355,00'},
+    {d:'Prorrogação de Registro',v:'R$ 2.500,00'},
     {d:'Recurso contra Indeferimento',v:'R$ 980,00'},
-    {d:'Manifesta\u00e7\u00e3o \u00e0 Oposi\u00e7\u00e3o',v:'R$ 790,00'},
-    {d:'Contraraz\u00f5es',v:'R$ 790,00'},
-    {d:'Oposi\u00e7\u00e3o contra Terceiros',v:'R$ 960,00'},
+    {d:'Manifestação à Oposição',v:'R$ 790,00'},
+    {d:'Contrarazões',v:'R$ 790,00'},
+    {d:'Oposição contra Terceiros',v:'R$ 960,00'},
     {d:'Nulidade contra Terceiros',v:'R$ 1.025,00'},
     {d:'Caducidade contra Terceiros',v:'R$ 995,00'},
-    {d:'Altera\u00e7\u00e3o Nome/Sede',v:'R$ 550,00'},
-    {d:'Cess\u00e3o por Transfer\u00eancia',v:'R$ 970,00'},
-    {d:'Notifica\u00e7\u00e3o Extrajudicial',v:'R$ 1.275,00'},
+    {d:'Alteração Nome/Sede',v:'R$ 550,00'},
+    {d:'Cessão por Transferência',v:'R$ 970,00'},
+    {d:'Notificação Extrajudicial',v:'R$ 1.275,00'},
   ];
-  const rHtml=_rows.map(r=>`<tr><td>${r.d}</td><td class="vb">${r.v}</td><td style="color:rgba(255,255,255,.4);font-style:italic;">Por acionamento</td></tr>`).join('');
-  return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide slide-val">
-    <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Servi\u00e7os Adicionais</span>
-    <div class="vl-title">Tabela de Servi\u00e7os &mdash; <span>Acionamento Pontual</span></div>
-    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobran\u00e7a</th></tr></thead><tbody>${rHtml}</tbody></table>
-    <div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">* Estes servi\u00e7os s\u00e3o acionados exclusivamente quando necess\u00e1rios. Cada procedimento ser\u00e1 or\u00e7ado individualmente e executado somente ap\u00f3s aprova\u00e7\u00e3o do cliente.</div>
+  const SPLIT=6;
+  const c1=_rows.slice(0,SPLIT);
+  const c2=_rows.slice(SPLIT);
+  const mkRows=rows=>rows.map(r=>`<tr><td>${r.d}</td><td class="vb">${r.v}</td><td style="color:rgba(255,255,255,.4);font-style:italic;">Por acionamento</td></tr>`).join('');
+  const s1=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn} — Serviços Adicionais (1/2)</div><div class="slide slide-val">
+    <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Serviços Adicionais</span>
+    <div class="vl-title">Tabela de Serviços &mdash; <span>Acionamento Pontual (1/2)</span></div>
+    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobrança</th></tr></thead><tbody>${mkRows(c1)}</tbody></table>
   </div></div>`;
+  const s2=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn+1} — Serviços Adicionais (2/2)</div><div class="slide slide-val">
+    <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Serviços Adicionais</span>
+    <div class="vl-title">Tabela de Serviços &mdash; <span>Acionamento Pontual (2/2)</span></div>
+    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobrança</th></tr></thead><tbody>${mkRows(c2)}</tbody></table>
+    <div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">* Estes serviços são acionados exclusivamente quando necessários. Cada procedimento será orçado individualmente e executado somente após aprovação do cliente.</div>
+  </div></div>`;
+  return s1+s2;
 }
-
 function _slideCover(tagline,sub){
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE 1</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">${tagline}</div><div class="cv-sub">${sub}</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
 }
@@ -4646,10 +4655,10 @@ function recalcGestaoPreview(){
   // Slide 5 — Transparência no Processo
   h+=_slideTransparencia(sn++);
 
-  // Slide 6 — Serviços Adicionais
-  h+=_slideServAdicionaisGestao(sn++);
+  // Slides 6–7 — Serviços Adicionais (2 slides)
+  h+=_slideServAdicionaisGestao(sn); sn+=2;
 
-  // Slide 7 — CTA
+  // Slide 8 — CTA
   h+=_slideCTA(sn,'Sua carteira protegida.<br>Sua marca em boas mãos.','Fale com a Suprema');
 
   const a=document.getElementById('previewAreaGestao');
