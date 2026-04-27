@@ -1655,6 +1655,22 @@ function printProposal(previewAreaId){
 
   var PW=338.667,PH=190.5;
 
+  // Aguarda todas as <img> de um elemento carregarem (fix para logos de cliente)
+  function waitForImages(el){
+    var imgs=Array.from(el.querySelectorAll('img'));
+    var pending=imgs.filter(function(img){return !(img.complete&&img.naturalHeight>0);});
+    if(!pending.length)return Promise.resolve();
+    return Promise.all(pending.map(function(img){
+      return new Promise(function(resolve){
+        img.addEventListener('load',resolve,{once:true});
+        img.addEventListener('error',resolve,{once:true});
+        // Força o browser a (re)processar src caso já esteja atribuído
+        var src=img.getAttribute('src');
+        if(src&&!img.complete){img.src=src;}
+      });
+    }));
+  }
+
   function doGenerate(){
     setStatus('Gerando slides...');
     var jsPDF=window.jspdf.jsPDF;
@@ -1677,15 +1693,18 @@ function printProposal(previewAreaId){
         return;
       }
       setStatus('Slide '+(idx+1)+' de '+slides.length+'...');
-      html2canvas(slides[idx],{
-        useCORS:false,
-        allowTaint:true,
-        backgroundColor:null,
-        scale:3,
-        windowWidth:1440,
-        windowHeight:810,
-        logging:false,
-        removeContainer:true
+      waitForImages(slides[idx]).then(function(){
+        return html2canvas(slides[idx],{
+          useCORS:false,
+          allowTaint:true,
+          backgroundColor:null,
+          scale:3,
+          windowWidth:1440,
+          windowHeight:810,
+          logging:false,
+          imageTimeout:0,
+          removeContainer:true
+        });
       }).then(function(canvas){
         var dataUrl=canvas.toDataURL('image/jpeg',0.96);
         if(idx>0)pdf.addPage([PW,PH],'landscape');
