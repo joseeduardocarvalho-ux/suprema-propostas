@@ -1816,17 +1816,23 @@ function openService(svc){
   } else if(svc==='adicional'){
     document.getElementById('generatorAdicionalScreen').style.display='block';
     if(document.getElementById('adicionalRowsWrap')&&!document.getElementById('adicionalRowsWrap').children.length){
-      addAdicionalRow('Expedição de Certificado','','R$ 355,00','');
-      addAdicionalRow('Prorrogação de Registro','','R$ 2.500,00','');
-      addAdicionalRow('Recurso contra Indeferimento','12 meses','R$ 980,00','');
-      addAdicionalRow('Manifestação a Oposição','','R$ 790,00','');
-      addAdicionalRow('Contrarrazões','60 dias da nulidade','R$ 790,00','');
-      addAdicionalRow('Oposição contra terceiros','60 dias','R$ 960,00','');
-      addAdicionalRow('Nulidade contra terceiros','180 dias','R$ 1.025,00','');
-      addAdicionalRow('Caducidade contra terceiros','5 anos','R$ 995,00','');
-      addAdicionalRow('Alteração nome/sede','','R$ 550,00','');
-      addAdicionalRow('Cessão por transferência','','R$ 970,00','');
-      addAdicionalRow('Notificação extrajudicial','','R$ 1.275,00','');
+      addAdicionalRow('Manifestação à Oposição','','R$ 1.112,00','');
+      addAdicionalRow('Contrarrazões','','R$ 1.280,00','');
+      addAdicionalRow('Recurso contra Indeferimento','','R$ 1.475,00','');
+      addAdicionalRow('Oposição contra terceiros','','R$ 1.260,00','');
+      addAdicionalRow('Nulidade contra terceiros','','R$ 1.636,00','');
+      addAdicionalRow('Caducidade contra terceiros','','R$ 1.795,00','');
+      addAdicionalRow('Cumprimento de Exigência de Marca','','A combinar','');
+      addAdicionalRow('Nomeação / Destituição de Procurador','','R$ 390,00','');
+      addAdicionalRow('Cessão de Transferência (1 processo)','','R$ 1.180,00','');
+      addAdicionalRow('Alteração de Razão Social e Endereço','','R$ 550,00','');
+      addAdicionalRow('Certificado — Segunda Via (por processo)','','R$ 520,00','');
+      addAdicionalRow('Expedição de Certificado','','R$ 380,00','');
+      addAdicionalRow('Notificação Extrajudicial','','R$ 1.275,00','');
+      addAdicionalRow('Prorrogação de Registro — Prazo Ordinário','','R$ 2.800,00','');
+      addAdicionalRow('Prorrogação de Registro — Prazo Extraordinário','','R$ 3.200,00','');
+      addAdicionalRow('Prorrogação de Prazo Processual — Ordinário','','R$ 2.800,00','');
+      addAdicionalRow('Prorrogação de Prazo Processual — Extraordinário','','R$ 3.200,00','');
     }
     recalcAdicionalPreview();
   } else if(svc==='pacote'){
@@ -3640,17 +3646,23 @@ function _slideTransparencia(sn){
 // Retorna 2 slides (6+5 linhas) — caller deve incrementar sn+=2
 function _slideServAdicionaisGestao(sn){
   const _rows=[
-    {d:'Expedição de Certificado',v:'R$ 355,00'},
-    {d:'Prorrogação de Registro',v:'R$ 2.500,00'},
-    {d:'Recurso contra Indeferimento',v:'R$ 980,00'},
-    {d:'Manifestação à Oposição',v:'R$ 790,00'},
-    {d:'Contrarazões',v:'R$ 790,00'},
-    {d:'Oposição contra Terceiros',v:'R$ 960,00'},
-    {d:'Nulidade contra Terceiros',v:'R$ 1.025,00'},
-    {d:'Caducidade contra Terceiros',v:'R$ 995,00'},
-    {d:'Alteração Nome/Sede',v:'R$ 550,00'},
-    {d:'Cessão por Transferência',v:'R$ 970,00'},
+    {d:'Manifestação à Oposição',v:'R$ 1.112,00'},
+    {d:'Contrarrazões',v:'R$ 1.280,00'},
+    {d:'Recurso contra Indeferimento',v:'R$ 1.475,00'},
+    {d:'Oposição contra Terceiros',v:'R$ 1.260,00'},
+    {d:'Nulidade contra Terceiros',v:'R$ 1.636,00'},
+    {d:'Caducidade contra Terceiros',v:'R$ 1.795,00'},
+    {d:'Cumprimento de Exigência de Marca',v:'A combinar'},
+    {d:'Nomeação / Destituição de Procurador',v:'R$ 390,00'},
+    {d:'Cessão de Transferência (1 processo)',v:'R$ 1.180,00'},
+    {d:'Alteração de Razão Social e Endereço',v:'R$ 550,00'},
+    {d:'Certificado — Segunda Via (por processo)',v:'R$ 520,00'},
+    {d:'Expedição de Certificado',v:'R$ 380,00'},
     {d:'Notificação Extrajudicial',v:'R$ 1.275,00'},
+    {d:'Prorrogação de Registro — Prazo Ordinário',v:'R$ 2.800,00'},
+    {d:'Prorrogação de Registro — Prazo Extraordinário',v:'R$ 3.200,00'},
+    {d:'Prorrogação de Prazo Processual — Ordinário',v:'R$ 2.800,00'},
+    {d:'Prorrogação de Prazo Processual — Extraordinário',v:'R$ 3.200,00'},
   ];
   const SPLIT=6;
   const c1=_rows.slice(0,SPLIT);
