@@ -816,6 +816,8 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-section glass" style="margin-top:24px;">
   <div class="field"><label class="field-label">Cliente / Marca</label><input type="text" id="pacoteCliente" value="Cliente" oninput="recalcPacotePreview()" onfocus="this.select()"></div>
   <div class="field"><label class="field-label">Serviços inclusos (aparece no slide)</label><input type="text" id="pacoteServicos" value="Registro de Marca Nacional + Direito Autoral" oninput="recalcPacotePreview()" onfocus="this.select()"></div>
+  <div class="field"><label class="field-label">Texto do slide informativo (parágrafo)</label><textarea id="pacoteTextoParagrafo" rows="3" oninput="recalcPacotePreview()" style="resize:vertical;font-size:14px;">A Suprema estruturou esta proposta contemplando todos os serviços necessários para garantir proteção jurídica completa ao seu negócio. Atendimento especializado e acompanhamento contínuo em cada etapa do processo.</textarea></div>
+  <div class="field"><label class="field-label">Texto dos cards de serviço (descrição)</label><textarea id="pacoteTextoCard" rows="2" oninput="recalcPacotePreview()" style="resize:vertical;font-size:14px;">Acompanhamento especializado da Suprema em todas as etapas do processo, desde o protocolo até a conclusão.</textarea></div>
   <div class="field"><label class="field-label">Logo do Cliente (opcional)</label><input type="file" id="clientLogoPacote" accept="image/*" onchange="handleLogoUploadPacote(event)" style="display:none"><div id="logoDropzonePacote" class="logo-upload-area" onclick="document.getElementById('clientLogoPacote').click()">Clique para enviar a logo do cliente</div><div id="logoPreviewBoxPacote" style="display:none;text-align:center;padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:14px;background:rgba(0,0,0,.15);"><img id="logoThumbPacote" style="max-height:60px;border-radius:8px;"><br><span class="logo-change-btn" onclick="resetLogoPacote()">Trocar</span></div></div>
   <div class="field">
     <label class="field-label">Itens do Investimento</label>
@@ -4865,16 +4867,20 @@ function recalcPacotePreview(){
   h+=_slideCover('Prote\u00e7\u00e3o completa<br>para o seu neg\u00f3cio.',_coverSub);
   h+=_slideInst();sn=3;
 
+  const textoParagrafo=(document.getElementById('pacoteTextoParagrafo')?.value||'').trim()
+    ||'A Suprema estruturou esta proposta para garantir proteção jurídica completa ao seu negócio.';
+  const textoCard=(document.getElementById('pacoteTextoCard')?.value||'').trim()
+    ||'Acompanhamento especializado da Suprema em todas as etapas do processo, desde o protocolo até a conclusão.';
+
   const servList=servicos.split(/\s*\+\s*/).map(function(s){return s.trim();}).filter(Boolean);
   const infoCards=servList.length?servList.map(function(s){
-    return{tit:s,txt:'Acompanhamento especializado da Suprema em todas as etapas do processo, desde o protocolo at\u00e9 a conclus\u00e3o.'};
-  }):[{tit:servicos,txt:'Prote\u00e7\u00e3o jur\u00eddica completa com acompanhamento especializado.'}];
+    return{tit:s,txt:textoCard};
+  }):[{tit:servicos,txt:textoCard}];
 
   h+=_slideInfo(sn++,'Pacote Personalizado','Uma proposta integrada desenvolvida exclusivamente para '+cliente+'.',
-    'A Suprema estruturou esta proposta contemplando todos os servi\u00e7os necess\u00e1rios para garantir prote\u00e7\u00e3o jur\u00eddica completa ao seu neg\u00f3cio. Atendimento especializado e acompanhamento cont\u00ednuo em cada etapa do processo.',
+    textoParagrafo,
     infoCards
   );
-
   if(rows.length){
     h+=_slideVal(sn++,'Investimento \u2014 '+cliente,rows,
       '* Valores referentes ao pacote completo de servi\u00e7os conforme descrito nesta proposta. Demais custos processuais est\u00e3o detalhados acima.',
