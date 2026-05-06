@@ -878,6 +878,21 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
       <div class="field"><label class="field-label">Valor unitário (por processo em andamento)</label><input type="text" id="gestaoExameUnit" value="R$ 998,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()"></div>
     </div>
   </div>
+  <div style="margin-top:16px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <label class="gestao-toggle"><input type="checkbox" id="gestaoIncluirServAdicionais" onchange="toggleGestaoServAdicionais();recalcGestaoPreview()"><span class="gestao-toggle-slider"></span></label>
+      <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px;">Serviços Adicionais (tabela editável por cliente)</span>
+    </div>
+    <div id="gestaoServAdicionaisWrap" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Serviço / Procedimento</span>
+        <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+        <span></span>
+      </div>
+      <div id="gestaoServRowsWrap"></div>
+      <button type="button" class="btn-add-row" onclick="addGestaoServRow('','')">+ Adicionar Serviço</button>
+    </div>
+  </div>
 </div>
 <div style="margin-top:16px;" id="previewAreaGestao"></div>
 <button class="btn-generate" onclick="generateGestaoPDF()">Gerar PDF da Proposta</button>
@@ -3645,43 +3660,25 @@ function _slideTransparencia(sn){
   </div></div>`;
 }
 
-// Retorna 2 slides (6+5 linhas) — caller deve incrementar sn+=2
-function _slideServAdicionaisGestao(sn){
-  const _rows=[
-    {d:'Manifestação à Oposição',v:'R$ 1.112,00'},
-    {d:'Contrarrazões',v:'R$ 1.280,00'},
-    {d:'Recurso contra Indeferimento',v:'R$ 1.475,00'},
-    {d:'Oposição contra Terceiros',v:'R$ 1.260,00'},
-    {d:'Nulidade contra Terceiros',v:'R$ 1.636,00'},
-    {d:'Caducidade contra Terceiros',v:'R$ 1.795,00'},
-    {d:'Cumprimento de Exigência de Marca',v:'A combinar'},
-    {d:'Nomeação / Destituição de Procurador',v:'R$ 390,00'},
-    {d:'Cessão de Transferência (1 processo)',v:'R$ 1.180,00'},
-    {d:'Alteração de Razão Social e Endereço',v:'R$ 550,00'},
-    {d:'Certificado — Segunda Via (por processo)',v:'R$ 520,00'},
-    {d:'Expedição de Certificado',v:'R$ 380,00'},
-    {d:'Notificação Extrajudicial',v:'R$ 1.275,00'},
-    {d:'Prorrogação de Registro — Prazo Ordinário',v:'R$ 2.800,00'},
-    {d:'Prorrogação de Registro — Prazo Extraordinário',v:'R$ 3.200,00'},
-    {d:'Prorrogação de Prazo Processual — Ordinário',v:'R$ 2.800,00'},
-    {d:'Prorrogação de Prazo Processual — Extraordinário',v:'R$ 3.200,00'},
-  ];
+// Gera slides de Serviços Adicionais a partir das linhas editáveis do formulário
+// rows = [{d, v}] — divide em chunks de 6, retorna N slides
+function _slideServAdicionaisGestao(sn, rows){
+  if(!rows||!rows.length)return '';
   const SPLIT=6;
-  const c1=_rows.slice(0,SPLIT);
-  const c2=_rows.slice(SPLIT);
-  const mkRows=rows=>rows.map(r=>`<tr><td>${r.d}</td><td class="vb">${r.v}</td><td style="color:rgba(255,255,255,.4);font-style:italic;">Por acionamento</td></tr>`).join('');
-  const s1=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn} — Serviços Adicionais (1/2)</div><div class="slide slide-val">
+  const chunks=[];
+  for(let i=0;i<rows.length;i+=SPLIT)chunks.push(rows.slice(i,i+SPLIT));
+  const total=chunks.length;
+  const mkRows=chunk=>chunk.map(r=>`<tr><td>${r.d}</td><td class="vb">${r.v}</td><td style="color:rgba(255,255,255,.4);font-style:italic;">Por acionamento</td></tr>`).join('');
+  return chunks.map(function(chunk,ci){
+    const pageLabel=total>1?' ('+(ci+1)+'/'+total+')':' ';
+    const isLast=ci===total-1;
+    return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn+ci} — Serviços Adicionais${pageLabel.trim()?pageLabel:''}</div><div class="slide slide-val">
     <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Serviços Adicionais</span>
-    <div class="vl-title">Tabela de Serviços &mdash; <span>Acionamento Pontual (1/2)</span></div>
-    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobrança</th></tr></thead><tbody>${mkRows(c1)}</tbody></table>
+    <div class="vl-title">Tabela de Serviços &mdash; <span>Acionamento Pontual${pageLabel}</span></div>
+    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobrança</th></tr></thead><tbody>${mkRows(chunk)}</tbody></table>
+    ${isLast?`<div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">* Estes serviços são acionados exclusivamente quando necessários. Cada procedimento será orçado individualmente e executado somente após aprovação do cliente.</div>`:''}
   </div></div>`;
-  const s2=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn+1} — Serviços Adicionais (2/2)</div><div class="slide slide-val">
-    <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Serviços Adicionais</span>
-    <div class="vl-title">Tabela de Serviços &mdash; <span>Acionamento Pontual (2/2)</span></div>
-    <table class="vtbl"><thead><tr><th style="width:55%">Procedimento</th><th style="width:22%">Valor</th><th>Cobrança</th></tr></thead><tbody>${mkRows(c2)}</tbody></table>
-    <div style="margin-top:clamp(8px,1.2vw,14px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.35);font-style:italic;max-width:540px;line-height:1.6;">* Estes serviços são acionados exclusivamente quando necessários. Cada procedimento será orçado individualmente e executado somente após aprovação do cliente.</div>
-  </div></div>`;
-  return s1+s2;
+  }).join('');
 }
 function _slideCover(tagline,sub){
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE 1</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">${tagline}</div><div class="cv-sub">${sub}</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
@@ -4678,13 +4675,16 @@ function recalcGestaoPreview(){
   // Slide 4 — Investimento
   h+=_slideVal(sn++,'Gestão de Carteira — '+procLabel,rows,nota||null,clientLogoDataGestao||null);
 
-  // Slide 5 — Transparência no Processo
-  h+=_slideTransparencia(sn++);
+  // Slides opcionais: Transparência + Serviços Adicionais
+  const incluirServAdicionais=document.getElementById('gestaoIncluirServAdicionais')?.checked||false;
+  const gestaoServRows=incluirServAdicionais?getGestaoServRows():[];
+  if(incluirServAdicionais&&gestaoServRows.length){
+    h+=_slideTransparencia(sn++);
+    const numServSlides=Math.ceil(gestaoServRows.length/6)||1;
+    h+=_slideServAdicionaisGestao(sn,gestaoServRows); sn+=numServSlides;
+  }
 
-  // Slides 6–7 — Serviços Adicionais (2 slides)
-  h+=_slideServAdicionaisGestao(sn); sn+=2;
-
-  // Slide 8 — CTA
+  // CTA — sempre o último
   h+=_slideCTA(sn,'Sua carteira protegida.<br>Sua marca em boas mãos.','Fale com a Suprema');
 
   const a=document.getElementById('previewAreaGestao');
@@ -4895,6 +4895,56 @@ function recalcPacotePreview(){
 
 function generatePacotePDF(){printProposal('previewAreaPacote');}
 
+// ── Serviços Adicionais editáveis no Gestão de Carteira ──────────────
+var _gestaoServRowCount=0;
+function escGestaoServ(s){return(s||'').replace(/"/g,'&quot;');}
+function toggleGestaoServAdicionais(){
+  const on=document.getElementById('gestaoIncluirServAdicionais').checked;
+  document.getElementById('gestaoServAdicionaisWrap').style.display=on?'block':'none';
+  if(on&&!document.getElementById('gestaoServRowsWrap').children.length){
+    addGestaoServRow('Expedição de Certificado','R$ 355,00');
+    addGestaoServRow('Prorrogação de Registro','R$ 2.500,00');
+    addGestaoServRow('Recurso contra Indeferimento','R$ 980,00');
+    addGestaoServRow('Manifestação à Oposição','R$ 790,00');
+    addGestaoServRow('Contrarazões','R$ 790,00');
+    addGestaoServRow('Oposição contra Terceiros','R$ 960,00');
+    addGestaoServRow('Nulidade contra Terceiros','R$ 1.025,00');
+    addGestaoServRow('Caducidade contra Terceiros','R$ 995,00');
+    addGestaoServRow('Alteração Nome/Sede','R$ 550,00');
+    addGestaoServRow('Cessão por Transferência','R$ 970,00');
+    addGestaoServRow('Notificação Extrajudicial','R$ 1.275,00');
+  }
+}
+function addGestaoServRow(desc,val){
+  _gestaoServRowCount++;
+  const n=_gestaoServRowCount;
+  const wrap=document.getElementById('gestaoServRowsWrap');
+  if(!wrap)return;
+  const row=document.createElement('div');
+  row.id='gestaoServRow_'+n;
+  row.style.cssText='display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:8px;align-items:start;';
+  row.innerHTML=
+    '<input type="text" id="gestaoServDesc_'+n+'" value="'+escGestaoServ(desc)+'" placeholder="Ex: Recurso contra Indeferimento" oninput="recalcGestaoPreview()" style="margin:0;">'
+   +'<input type="text" id="gestaoServVal_'+n+'" value="'+escGestaoServ(val)+'" placeholder="R$ 0,00" oninput="fmtCurrency(this);recalcGestaoPreview()" onfocus="this.select()" style="margin:0;">'
+   +'<button class="pacote-row-remove" onclick="removeGestaoServRow('+n+')">×</button>';
+  wrap.appendChild(row);
+  recalcGestaoPreview();
+}
+function removeGestaoServRow(n){
+  const r=document.getElementById('gestaoServRow_'+n);
+  if(r)r.remove();
+  recalcGestaoPreview();
+}
+function getGestaoServRows(){
+  const rows=[];
+  document.querySelectorAll('[id^="gestaoServRow_"]').forEach(function(row){
+    const n=row.id.split('_')[1];
+    const d=document.getElementById('gestaoServDesc_'+n)?.value||'';
+    const v=document.getElementById('gestaoServVal_'+n)?.value||'';
+    if(d||v)rows.push({d,v});
+  });
+  return rows;
+}
 function toggleGestaoHon(){
   const on=document.getElementById('gestaoIncluirHon').checked;
   document.getElementById('gestaoHonWrap').style.display=on?'block':'none';
