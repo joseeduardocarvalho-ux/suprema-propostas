@@ -954,8 +954,17 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 
 <div class="sec-label"><span class="sec-dot" style="color:var(--red-text)"></span> Opcionais</div>
 <div class="glass form-section">
-  <div class="check-item" onclick="toggleCheck(this,'includeAdditional')"><div class="ck">&#10003;</div><span>Servicos Adicionais</span></div>
+  <div class="check-item" onclick="toggleCheck(this,'includeAdditional');toggleServAdic('nacional',this.classList.contains('on'))"><div class="ck">&#10003;</div><span>Servicos Adicionais</span></div>
   <input type="hidden" id="includeAdditional" value="0">
+  <div id="servAdicWrap_nacional" style="display:none;margin-top:8px;">
+    <div style="display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Serviço / Procedimento</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+      <span></span>
+    </div>
+    <div id="servAdicRowsWrap_nacional"></div>
+    <button type="button" class="btn-add-row" onclick="addServAdicRow('nacional','','')">+ Adicionar Serviço</button>
+  </div>
 </div>
 
 <button class="btn-generate" onclick="generatePDF()">Gerar PDF da Proposta</button>
@@ -999,8 +1008,17 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 
 <div class="sec-label"><span class="sec-dot" style="color:var(--red-text)"></span> Opcionais</div>
 <div class="glass form-section">
-  <div class="check-item" onclick="toggleCheck(this,'includeAdditionalIntl')"><div class="ck">&#10003;</div><span>Serviços Adicionais</span></div>
+  <div class="check-item" onclick="toggleCheck(this,'includeAdditionalIntl');toggleServAdic('intl',this.classList.contains('on'));recalcIntlPreview()"><div class="ck">&#10003;</div><span>Serviços Adicionais</span></div>
   <input type="hidden" id="includeAdditionalIntl" value="0">
+  <div id="servAdicWrap_intl" style="display:none;margin-top:8px;">
+    <div style="display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Serviço / Procedimento</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+      <span></span>
+    </div>
+    <div id="servAdicRowsWrap_intl"></div>
+    <button type="button" class="btn-add-row" onclick="addServAdicRow('intl','','')">+ Adicionar Serviço</button>
+  </div>
 </div>
 
 <button class="btn-generate" onclick="generateIntlPDF()">Gerar PDF da Proposta Internacional</button>
@@ -1120,8 +1138,17 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 
 <div class="sec-label"><span class="sec-dot" style="color:var(--red-text)"></span> Opcionais</div>
 <div class="glass form-section">
-  <div class="check-item" onclick="toggleCheckTrid(this,'includeAdditionalTrid')"><div class="ck">&#10003;</div><span>Servicos Adicionais</span></div>
+  <div class="check-item" onclick="toggleCheckTrid(this,'includeAdditionalTrid');toggleServAdic('trid',this.classList.contains('on'))"><div class="ck">&#10003;</div><span>Servicos Adicionais</span></div>
   <input type="hidden" id="includeAdditionalTrid" value="0">
+  <div id="servAdicWrap_trid" style="display:none;margin-top:8px;">
+    <div style="display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Serviço / Procedimento</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+      <span></span>
+    </div>
+    <div id="servAdicRowsWrap_trid"></div>
+    <button type="button" class="btn-add-row" onclick="addServAdicRow('trid','','')">+ Adicionar Serviço</button>
+  </div>
 </div>
 
 <button class="btn-generate" onclick="generatePDFTrid()">Gerar PDF da Proposta</button>
@@ -1639,15 +1666,16 @@ function updatePreview(){
     <div style="font-size:11px;color:rgba(255,255,255,.4);line-height:1.7;">Este investimento contempla as etapas do processo de registro junto ao INPI. Ao longo do exame, podem surgir intercorrências como <strong style="color:rgba(255,255,255,.6);font-weight:600;">Oposição de terceiros, Exigências Formais, Indeferimento ou Recursos</strong> — procedimentos que exigem atuação técnica específica. Caso ocorram, a Suprema apresentará um orçamento detalhado para cada situação, <strong style="color:rgba(255,255,255,.6);font-weight:600;">sem custos surpresa e com total transparência</strong>.</div>
   </div>`;
 
-  // ADDITIONAL
+  // ADDITIONAL — Serviços Adicionais editáveis
   if(d.ia){
-    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-add">
-      <div class="add-left"><div class="add-title">Servicos<br><span>Adicionais</span></div><div class="add-desc">Durante o tramite do registro, <strong>o INPI pode solicitar manifestacoes ou ocorrer eventos juridicos que exijam atuacao adicional.</strong><br><br>Sao acionados <strong>apenas quando necessario.</strong></div></div>
-      <table class="atbl"><thead><tr><th>Servico</th><th>Valor</th></tr></thead><tbody>
-        <tr><td>Expedicao de Certificado</td><td>R$355,00</td></tr><tr><td>Prorrogacao de Registro</td><td>R$2.500,00</td></tr><tr><td>Recurso contra indeferimento</td><td>R$980,00</td></tr><tr><td>Manifestacao a oposicao</td><td>R$790,00</td></tr><tr><td>Contrarrazoes</td><td>R$790,00</td></tr><tr><td>Oposicao contra terceiros</td><td>R$960,00</td></tr><tr><td>Nulidade contra terceiros</td><td>R$1.025,00</td></tr><tr><td>Caducidade contra terceiros</td><td>R$995,00</td></tr><tr><td>Alteracao nome/sede</td><td>R$550,00</td></tr><tr><td>Cessao por transferencia</td><td>R$970,00</td></tr><tr><td>Notificacao extrajudicial</td><td>R$1.275,00</td></tr>
-      </tbody></table>
-    </div></div>`;
+    const _srvRows=getServAdicRows('nacional');
+    if(_srvRows.length){
+      h+=_slideTransparencia(sn++);
+      const _nSl=Math.ceil(_srvRows.length/6)||1;
+      h+=_slideServAdicionaisGestao(sn,_srvRows); sn+=_nSl;
+    }
   }
+
 
   // CTA
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">Registre sua marca,<br>invista com segurança.</div><div class="cv-sub">Fale com a Suprema</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
@@ -2363,19 +2391,16 @@ function recalcIntlPreview(){
     }
   }
 
-  // SLIDE: ADICIONAIS
+  // SLIDE: ADICIONAIS — Serviços Adicionais editáveis
   if(d.ia){
-    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-add">
-      <div class="add-left"><div class="add-title">Serviços<br><span>Adicionais</span></div><div class="add-desc">Durante o trâmite do registro internacional, <strong>a WIPO ou escritórios locais podem solicitar manifestações que exijam atuação adicional.</strong><br><br>São acionados <strong>apenas quando necessário.</strong></div></div>
-      <table class="atbl"><thead><tr><th>Serviço</th><th>Valor</th></tr></thead><tbody>
-        <tr><td>Resposta a irregularidades WIPO</td><td>Sob consulta</td></tr>
-        <tr><td>Recurso contra recusa provisória</td><td>Sob consulta</td></tr>
-        <tr><td>Extensão de prazo</td><td>Sob consulta</td></tr>
-        <tr><td>Renovação internacional</td><td>Sob consulta</td></tr>
-        <tr><td>Alteração de titular/dados</td><td>Sob consulta</td></tr>
-      </tbody></table>
-    </div></div>`;
+    const _srvRows=getServAdicRows('intl');
+    if(_srvRows.length){
+      h+=_slideTransparencia(sn++);
+      const _nSl=Math.ceil(_srvRows.length/6)||1;
+      h+=_slideServAdicionaisGestao(sn,_srvRows); sn+=_nSl;
+    }
   }
+
 
   // SLIDE: CTA
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">Registre sua marca,<br>conquiste o mundo.</div><div class="cv-sub">Fale com a Suprema</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
@@ -2846,15 +2871,16 @@ function updatePreviewTrid(){
     ${d.nt?`<div class="vl-note">${d.nt}</div>`:''}
   </div></div>`;
 
-  // ADDITIONAL
+  // ADDITIONAL — Serviços Adicionais editáveis
   if(d.ia){
-    h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-add">
-      <div class="add-left"><div class="add-title">Servicos<br><span>Adicionais</span></div><div class="add-desc">Durante o tramite do registro, <strong>o INPI pode solicitar manifestacoes ou ocorrer eventos juridicos que exijam atuacao adicional.</strong><br><br>Sao acionados <strong>apenas quando necessario.</strong></div></div>
-      <table class="atbl"><thead><tr><th>Servico</th><th>Valor</th></tr></thead><tbody>
-        <tr><td>Expedicao de Certificado</td><td>R$355,00</td></tr><tr><td>Prorrogacao de Registro</td><td>R$2.500,00</td></tr><tr><td>Recurso contra indeferimento</td><td>R$980,00</td></tr><tr><td>Manifestacao a oposicao</td><td>R$790,00</td></tr><tr><td>Contrarrazoes</td><td>R$790,00</td></tr><tr><td>Oposicao contra terceiros</td><td>R$960,00</td></tr><tr><td>Nulidade contra terceiros</td><td>R$1.025,00</td></tr><tr><td>Caducidade contra terceiros</td><td>R$995,00</td></tr><tr><td>Alteracao nome/sede</td><td>R$550,00</td></tr><tr><td>Cessao por transferencia</td><td>R$970,00</td></tr><tr><td>Notificacao extrajudicial</td><td>R$1.275,00</td></tr>
-      </tbody></table>
-    </div></div>`;
+    const _srvRows=getServAdicRows('trid');
+    if(_srvRows.length){
+      h+=_slideTransparencia(sn++);
+      const _nSl=Math.ceil(_srvRows.length/6)||1;
+      h+=_slideServAdicionaisGestao(sn,_srvRows); sn+=_nSl;
+    }
   }
+
 
   // CTA
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-cover"><img class="cv-logo" src="${IMG_LOGO_W}"><div class="cv-tagline">Registre sua marca,<br>invista com segurança.</div><div class="cv-sub">Fale com a Suprema</div><div class="cv-footer">Suprema All Rights Reserved</div></div></div>`;
@@ -4895,6 +4921,58 @@ function recalcPacotePreview(){
 
 function generatePacotePDF(){printProposal('previewAreaPacote');}
 
+// ── Serviços Adicionais editáveis — funções compartilhadas ─────────
+var _servAdicCounts={};
+var _servAdicDefaults={
+  nacional:[['Expedição de Certificado','R$ 355,00'],['Prorrogação de Registro','R$ 2.500,00'],['Recurso contra Indeferimento','R$ 980,00'],['Manifestação à Oposição','R$ 790,00'],['Contrarazões','R$ 790,00'],['Oposição contra Terceiros','R$ 960,00'],['Nulidade contra Terceiros','R$ 1.025,00'],['Caducidade contra Terceiros','R$ 995,00'],['Alteração Nome/Sede','R$ 550,00'],['Cessão por Transferência','R$ 970,00'],['Notificação Extrajudicial','R$ 1.275,00']],
+  intl:[['Resposta a irregularidades WIPO','Sob consulta'],['Recurso contra recusa provisória','Sob consulta'],['Extensão de prazo','Sob consulta'],['Renovação internacional','Sob consulta'],['Alteração de titular/dados','Sob consulta']],
+  trid:[['Expedição de Certificado','R$ 355,00'],['Prorrogação de Registro','R$ 2.500,00'],['Recurso contra Indeferimento','R$ 980,00'],['Manifestação à Oposição','R$ 790,00'],['Contrarazões','R$ 790,00'],['Oposição contra Terceiros','R$ 960,00'],['Nulidade contra Terceiros','R$ 1.025,00'],['Caducidade contra Terceiros','R$ 995,00'],['Alteração Nome/Sede','R$ 550,00'],['Cessão por Transferência','R$ 970,00'],['Notificação Extrajudicial','R$ 1.275,00']]
+};
+var _servAdicRecalcMap={nacional:'updatePreview',intl:'recalcIntlPreview',trid:'updatePreviewTrid'};
+function escServ(s){return(s||'').replace(/"/g,'&quot;');}
+function toggleServAdic(prefix,on){
+  var wrap=document.getElementById('servAdicWrap_'+prefix);
+  if(!wrap)return;
+  wrap.style.display=on?'block':'none';
+  if(on&&!document.getElementById('servAdicRowsWrap_'+prefix).children.length){
+    var defs=_servAdicDefaults[prefix]||_servAdicDefaults['nacional'];
+    defs.forEach(function(d){addServAdicRow(prefix,d[0],d[1]);});
+  }
+}
+function addServAdicRow(prefix,desc,val){
+  if(!_servAdicCounts[prefix])_servAdicCounts[prefix]=0;
+  _servAdicCounts[prefix]++;
+  var n=_servAdicCounts[prefix];
+  var wrap=document.getElementById('servAdicRowsWrap_'+prefix);
+  if(!wrap)return;
+  var recalcFn=_servAdicRecalcMap[prefix]||'';
+  var oninputStr=recalcFn?'fmtCurrency(this);'+recalcFn+'()':'fmtCurrency(this)';
+  var row=document.createElement('div');
+  row.id='servAdicRow_'+prefix+'_'+n;
+  row.style.cssText='display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:8px;align-items:start;';
+  row.innerHTML=
+    '<input type="text" id="servAdicDesc_'+prefix+'_'+n+'" value="'+escServ(desc)+'" placeholder="Ex: Recurso contra Indeferimento" style="margin:0;">'
+   +'<input type="text" id="servAdicVal_'+prefix+'_'+n+'" value="'+escServ(val)+'" placeholder="R$ 0,00" oninput="'+oninputStr+'" onfocus="this.select()" style="margin:0;">'
+   +'<button class="pacote-row-remove" data-pfx="'+prefix+'" data-n="'+n+'" onclick="removeServAdicRow(this.dataset.pfx,this.dataset.n)">×</button>';
+  wrap.appendChild(row);
+}
+function removeServAdicRow(prefix,n){
+  var r=document.getElementById('servAdicRow_'+prefix+'_'+n);
+  if(r)r.remove();
+}
+function getServAdicRows(prefix){
+  var rows=[];
+  var wrap=document.getElementById('servAdicRowsWrap_'+prefix);
+  if(!wrap)return rows;
+  Array.from(wrap.children).forEach(function(row){
+    var parts=row.id.split('_');
+    var n=parts[parts.length-1];
+    var d=document.getElementById('servAdicDesc_'+prefix+'_'+n);
+    var v=document.getElementById('servAdicVal_'+prefix+'_'+n);
+    if(d&&v&&(d.value||v.value))rows.push({d:d.value,v:v.value});
+  });
+  return rows;
+}
 // ── Serviços Adicionais editáveis no Gestão de Carteira ──────────────
 var _gestaoServRowCount=0;
 function escGestaoServ(s){return(s||'').replace(/"/g,'&quot;');}
