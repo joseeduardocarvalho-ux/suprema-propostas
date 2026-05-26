@@ -1055,6 +1055,33 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
       <div id="parcelasPesqPatWrap" style="display:none;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoPesqPat" id="modoPesqPatVista" value="vista" checked onchange="toggleParcelasNumPat('PesqPat');recalcPatPreview()"><label for="modoPesqPatVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoPesqPat" id="modoPesqPatParc" value="parcelado" onchange="toggleParcelasNumPat('PesqPat');recalcPatPreview()"><label for="modoPesqPatParc">Parcelado</label></div></div><div id="parcelasPesqPatNumWrap" style="display:none;margin-top:6px;"><input type="number" id="parcelasPesqPatNum" placeholder="Número de parcelas" min="2" max="24" oninput="recalcPatPreview()" style="width:100%;"></div></div>
     </div>
   </div>
+  <div class="field">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div class="check-item" style="margin:0;" onclick="togglePatPubAnt(this)"><div class="ck">&#10003;</div><span>Publicação Antecipada</span></div>
+      <input type="hidden" id="incluirPubAntPat" value="0">
+    </div>
+    <div id="pubAntPatWrap" style="display:none;">
+      <input type="text" id="valPubAntPat" value="R$ 245,00" style="width:100%;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()">
+    </div>
+  </div>
+  <div class="field">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div class="check-item" style="margin:0;" onclick="togglePatExamePrior(this)"><div class="ck">&#10003;</div><span>Exame Prioritário</span></div>
+      <input type="hidden" id="incluirExamePriorPat" value="0">
+    </div>
+    <div id="examePriorPatWrap" style="display:none;">
+      <input type="text" id="valExamePriorPat" value="R$ 945,00" style="width:100%;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()">
+    </div>
+  </div>
+  <div class="field">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div class="check-item" style="margin:0;" onclick="togglePatExameInv(this)"><div class="ck">&#10003;</div><span>Exame de Invenção</span></div>
+      <input type="hidden" id="incluirExameInvPat" value="0">
+    </div>
+    <div id="exameInvPatWrap" style="display:none;">
+      <input type="text" id="valExameInvPat" value="R$ 935,00" style="width:100%;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()">
+    </div>
+  </div>
   <div class="field"><label class="field-label">Depósito do Pedido</label><div style="display:flex;gap:8px;"><input type="text" id="valDepPat" value="R$ 790,00" style="flex:1;min-width:0;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()"><select id="pgtoDepPat" onchange="toggleParcelasPat('DepPat');recalcPatPreview()" style="flex:0 0 100px;"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartão</option></select></div><div id="parcelasDepPatWrap" style="display:none;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoDepPat" id="modoDepPatVista" value="vista" checked onchange="toggleParcelasNumPat('DepPat');recalcPatPreview()"><label for="modoDepPatVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoDepPat" id="modoDepPatParc" value="parcelado" onchange="toggleParcelasNumPat('DepPat');recalcPatPreview()"><label for="modoDepPatParc">Parcelado</label></div></div><div id="parcelasDepPatNumWrap" style="display:none;margin-top:6px;"><input type="number" id="parcelasDepPatNum" placeholder="Número de parcelas" min="2" max="24" oninput="recalcPatPreview()" style="width:100%;"></div></div></div>
   <div class="field"><label class="field-label">Engenheiro</label><input type="text" id="valEngPat" value="R$ 1.200,00" style="width:100%;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()"><div class="field-hint">Independente da forma de pagamento — sempre após a entrega do trabalho</div></div>
   <div class="field"><label class="field-label">Honorários Advocatícios</label><div style="display:flex;gap:8px;"><input type="text" id="valHonPat" value="R$ 5.600,00" style="flex:1;min-width:0;" oninput="fmtCurrency(this);recalcPatPreview()" onfocus="this.select()"><select id="pgtoHonPat" onchange="toggleParcelasPat('HonPat');recalcPatPreview()" style="flex:0 0 100px;"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartão</option></select></div><div id="parcelasHonPatWrap" style="display:none;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoHonPat" id="modoHonPatVista" value="vista" checked onchange="toggleParcelasNumPat('HonPat');recalcPatPreview()"><label for="modoHonPatVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoHonPat" id="modoHonPatParc" value="parcelado" onchange="toggleParcelasNumPat('HonPat');recalcPatPreview()"><label for="modoHonPatParc">Parcelado</label></div></div><div id="parcelasHonPatNumWrap" style="display:none;margin-top:6px;"><input type="number" id="parcelasHonPatNum" placeholder="Número de parcelas" min="2" max="24" oninput="recalcPatPreview()" style="width:100%;"></div></div></div>
@@ -2432,6 +2459,27 @@ function togglePatPesq(el){
   document.getElementById('pesqPatWrap').style.display=v==='1'?'block':'none';
   recalcPatPreview();
 }
+function togglePatPubAnt(el){
+  el.classList.toggle('on');
+  const v=el.classList.contains('on')?'1':'0';
+  document.getElementById('incluirPubAntPat').value=v;
+  document.getElementById('pubAntPatWrap').style.display=v==='1'?'block':'none';
+  recalcPatPreview();
+}
+function togglePatExamePrior(el){
+  el.classList.toggle('on');
+  const v=el.classList.contains('on')?'1':'0';
+  document.getElementById('incluirExamePriorPat').value=v;
+  document.getElementById('examePriorPatWrap').style.display=v==='1'?'block':'none';
+  recalcPatPreview();
+}
+function togglePatExameInv(el){
+  el.classList.toggle('on');
+  const v=el.classList.contains('on')?'1':'0';
+  document.getElementById('incluirExameInvPat').value=v;
+  document.getElementById('exameInvPatWrap').style.display=v==='1'?'block':'none';
+  recalcPatPreview();
+}
 function toggleParcelasPat(f){
   const pgto=document.getElementById('pgto'+f).value;
   document.getElementById('parcelas'+f+'Wrap').style.display=(pgto!=='PIX')?'block':'none';
@@ -2462,11 +2510,20 @@ function gdPat(){
   const tipo=document.querySelector('input[name="patType"]:checked').value;
   const tipoFull=tipo==='PI'?'Patente de Invenção (PI)':'Modelo de Utilidade (MU)';
   const incPesq=document.getElementById('incluirPesqPat').value==='1';
+  const incPubAnt=document.getElementById('incluirPubAntPat').value==='1';
+  const incExamePrior=document.getElementById('incluirExamePriorPat').value==='1';
+  const incExameInv=document.getElementById('incluirExameInvPat').value==='1';
   return{
     titulo:document.getElementById('patTitle').value||'Título da Patente',
     tipo,tipoFull,
     incPesq,
     pesq:document.getElementById('valPesqPat').value||'R$ 1.200,00',
+    incPubAnt,
+    pubAnt:document.getElementById('valPubAntPat').value||'R$ 245,00',
+    incExamePrior,
+    examePrior:document.getElementById('valExamePriorPat').value||'R$ 945,00',
+    incExameInv,
+    exameInv:document.getElementById('valExameInvPat').value||'R$ 935,00',
     dep:document.getElementById('valDepPat').value||'R$ 790,00',
     eng:document.getElementById('valEngPat').value||'R$ 1.200,00',
     hon:document.getElementById('valHonPat').value||'R$ 5.600,00',
@@ -2525,6 +2582,9 @@ function recalcPatPreview(){
     <div class="vl-title">Valores &mdash; <span>${d.tipoFull}</span></div>
     <table class="vtbl"><thead><tr><th style="width:35%">Etapa / Serviço</th><th style="width:22%">Valor</th><th>Pagamento</th></tr></thead><tbody>
       ${d.incPesq?`<tr><td>Pesquisa Nacional e Internacional</td><td class="vb">${d.pesq}</td><td>${d.pp}</td></tr>`:''}
+      ${d.incPubAnt?`<tr><td>Publicação Antecipada</td><td class="vb">${d.pubAnt}</td><td>PIX</td></tr>`:''}
+      ${d.incExamePrior?`<tr><td>Exame Prioritário</td><td class="vb">${d.examePrior}</td><td>PIX</td></tr>`:''}
+      ${d.incExameInv?`<tr><td>Exame de Invenção</td><td class="vb">${d.exameInv}</td><td>PIX</td></tr>`:''}
       <tr><td>Depósito do Pedido</td><td class="vb">${d.dep}</td><td>${d.dp}</td></tr>
       <tr><td>Engenheiro</td><td class="vb">${d.eng}</td><td>Após entrega do trabalho</td></tr>
       <tr><td>Honorários Advocatícios</td><td class="vb">${d.hon}</td><td>${d.hp}</td></tr>
