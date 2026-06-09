@@ -4998,6 +4998,9 @@ function toggleServAdic(prefix,on){
     var defs=_servAdicDefaults[prefix]||_servAdicDefaults['nacional'];
     defs.forEach(function(d){addServAdicRow(prefix,d[0],d[1]);});
   }
+  // Re-run preview AFTER rows are populated (toggleCheck runs it before rows exist)
+  var fn=_servAdicRecalcMap[prefix];
+  if(fn&&window[fn])window[fn]();
 }
 function addServAdicRow(prefix,desc,val){
   if(!_servAdicCounts[prefix])_servAdicCounts[prefix]=0;
