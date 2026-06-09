@@ -5014,7 +5014,7 @@ function addServAdicRow(prefix,desc,val){
   row.id='servAdicRow_'+prefix+'_'+n;
   row.style.cssText='display:grid;grid-template-columns:1fr 120px 34px;gap:8px;margin-bottom:8px;align-items:start;';
   row.innerHTML=
-    '<input type="text" id="servAdicDesc_'+prefix+'_'+n+'" value="'+escServ(desc)+'" placeholder="Ex: Recurso contra Indeferimento" style="margin:0;">'
+    '<input type="text" id="servAdicDesc_'+prefix+'_'+n+'" value="'+escServ(desc)+'" placeholder="Ex: Recurso contra Indeferimento" oninput="'+recalcFn+'()" style="margin:0;">'
    +'<input type="text" id="servAdicVal_'+prefix+'_'+n+'" value="'+escServ(val)+'" placeholder="R$ 0,00" oninput="'+oninputStr+'" onfocus="this.select()" style="margin:0;">'
    +'<button class="pacote-row-remove" data-pfx="'+prefix+'" data-n="'+n+'" onclick="removeServAdicRow(this.dataset.pfx,this.dataset.n)">×</button>';
   wrap.appendChild(row);
