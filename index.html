@@ -945,10 +945,26 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 
 <div class="sec-label"><span class="sec-dot" style="color:var(--red-text)"></span> Valores</div>
 <div class="glass form-section">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <label class="gestao-toggle"><input type="checkbox" id="nacValPersonalizado" onchange="toggleNacValPersonalizado();updatePreview()"><span class="gestao-toggle-slider"></span></label>
+    <span style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:2px;">Personalizar tabela de valores</span>
+  </div>
+  <div id="nacValFixedFields">
   <div class="field"><label class="field-label">Deposito</label><div style="display:flex;gap:8px;"><input type="text" id="valDeposito" value="R$ 660,00" style="flex:1;min-width:0;" oninput="fmtCurrency(this);updatePreview()" onfocus="this.select()" style="flex:1;"><select id="pgtoDeposito" onchange="toggleParcelas('Deposito');updatePreview()" style="flex:0 0 100px;"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartão</option></select></div><div id="parcelasDepositoWrap" style="display:none;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoDeposito" id="modoDepositoVista" value="vista" checked onchange="toggleParcelasNum('Deposito');updatePreview()"><label for="modoDepositoVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoDeposito" id="modoDepositoParc" value="parcelado" onchange="toggleParcelasNum('Deposito');updatePreview()"><label for="modoDepositoParc">Parcelado</label></div></div><div id="parcelasDepositoNumWrap" style="display:none;margin-top:6px;"><input type="number" id="parcelasDepositoNum" placeholder="Número de parcelas" min="2" max="24" oninput="updatePreview()" style="width:100%;"></div></div></div>
   <div class="field"><label class="field-label">Honorarios</label><div style="display:flex;gap:8px;"><input type="text" id="valHonorarios" value="R$ 1.800,00" style="flex:1;min-width:0;" oninput="fmtCurrency(this);updatePreview()" onfocus="this.select()" style="flex:1;"><select id="pgtoHonorarios" onchange="toggleParcelas('Honorarios');updatePreview()" style="flex:0 0 100px;"><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartão</option></select></div><div id="parcelasHonorariosWrap" style="display:none;margin-top:8px;"><div class="radio-group"><div class="radio-pill"><input type="radio" name="modoHonorarios" id="modoHonorariosVista" value="vista" checked onchange="toggleParcelasNum('Honorarios');updatePreview()"><label for="modoHonorariosVista">À Vista</label></div><div class="radio-pill"><input type="radio" name="modoHonorarios" id="modoHonorariosParc" value="parcelado" onchange="toggleParcelasNum('Honorarios');updatePreview()"><label for="modoHonorariosParc">Parcelado</label></div></div><div id="parcelasHonorariosNumWrap" style="display:none;margin-top:6px;"><input type="number" id="parcelasHonorariosNum" placeholder="Número de parcelas" min="2" max="24" oninput="updatePreview()" style="width:100%;"></div></div></div>
   <div class="field"><label class="field-label">Exame de Merito</label><input type="text" id="valExame" style="width:100%" value="R$ 998,00" oninput="fmtCurrency(this);updatePreview()" onfocus="this.select()"><div class="field-hint">Apos 12 meses do Deposito</div></div>
   <div class="field"><label class="field-label">Anuidade</label><input type="text" id="valAnuidade" style="width:100%" value="R$ 395,00" oninput="fmtCurrency(this);updatePreview()" onfocus="this.select()"><div class="field-hint">Apos Entrega do Certificado</div></div>
+  </div>
+  <div id="nacValCustomWrap" style="display:none;">
+    <div style="display:grid;grid-template-columns:1.5fr 120px 170px 34px;gap:8px;margin-bottom:6px;padding:0 2px;">
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Descrição / Etapa</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Valor</span>
+      <span style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;">Pagamento</span>
+      <span></span>
+    </div>
+    <div id="nacValRowsWrap"></div>
+    <button type="button" class="btn-add-row" onclick="addNacValRow('','','')">+ Adicionar Linha</button>
+  </div>
   <div class="field"><label class="field-label">Observacao</label><textarea id="tableNote" placeholder="Ex: Valores para 2 processos." rows="2" oninput="updatePreview()"></textarea></div>
 </div>
 
@@ -1590,6 +1606,62 @@ function recalcValues(){
   setVal('valAnuidade',BASE_ANU);
   updatePreview();
 }
+// ── Tabela de valores personalizável — Nacional ────────────────────
+var _nacValRowCount=0;
+function toggleNacValPersonalizado(){
+  var on=document.getElementById('nacValPersonalizado').checked;
+  document.getElementById('nacValFixedFields').style.display=on?'none':'';
+  document.getElementById('nacValCustomWrap').style.display=on?'block':'none';
+  if(on&&!document.getElementById('nacValRowsWrap').children.length){
+    var d=gd();
+    addNacValRow('Pesquisa de Anterioridade','Isenta','—');
+    addNacValRow('Depósito do Pedido',d.dep,d.dp);
+    addNacValRow('Honorários Advocatícios',d.hon,d.hp);
+    addNacValRow('Exame de Mérito',d.exa,'Após 12 meses do Depósito');
+    addNacValRow('Anuidade de Manutenção',d.anu,'Após Certificado');
+  }
+}
+function addNacValRow(desc,val,pgto){
+  _nacValRowCount++;
+  var n=_nacValRowCount;
+  var wrap=document.getElementById('nacValRowsWrap');
+  if(!wrap)return;
+  var row=document.createElement('div');
+  row.id='nacValRow_'+n;
+  row.style.cssText='display:grid;grid-template-columns:1.5fr 120px 170px 34px;gap:8px;margin-bottom:8px;align-items:start;';
+  var iD=document.createElement('input'); iD.type='text'; iD.id='nacValDesc_'+n;
+  iD.value=desc||''; iD.placeholder='Ex: Depósito do Pedido'; iD.style.margin='0';
+  iD.addEventListener('input',function(){updatePreview();});
+  var iV=document.createElement('input'); iV.type='text'; iV.id='nacValVal_'+n;
+  iV.value=val||''; iV.placeholder='R$ 0,00'; iV.style.margin='0';
+  iV.addEventListener('focus',function(){this.select();});
+  iV.addEventListener('input',function(){fmtCurrency(this);updatePreview();});
+  var iP=document.createElement('input'); iP.type='text'; iP.id='nacValPgto_'+n;
+  iP.value=pgto||''; iP.placeholder='Ex: PIX / 12 parcelas'; iP.style.margin='0';
+  iP.addEventListener('input',function(){updatePreview();});
+  var btn=document.createElement('button'); btn.className='pacote-row-remove'; btn.textContent='×';
+  btn.addEventListener('click',function(){removeNacValRow(n);});
+  row.appendChild(iD); row.appendChild(iV); row.appendChild(iP); row.appendChild(btn);
+  wrap.appendChild(row);
+}
+function removeNacValRow(n){
+  var r=document.getElementById('nacValRow_'+n);
+  if(r)r.remove();
+  updatePreview();
+}
+function getNacValRows(){
+  var rows=[];
+  var wrap=document.getElementById('nacValRowsWrap');
+  if(!wrap)return rows;
+  Array.from(wrap.children).forEach(function(row){
+    var n=row.id.split('_').pop();
+    var d=document.getElementById('nacValDesc_'+n);
+    var v=document.getElementById('nacValVal_'+n);
+    var p=document.getElementById('nacValPgto_'+n);
+    if(d&&(d.value||(v&&v.value)))rows.push({d:d?d.value:'',v:v?v.value:'',p:p?p.value:'—'});
+  });
+  return rows;
+}
 function updatePreview(){
   const d=gd(),a=document.getElementById('previewArea');
   const nums=d.cls.map(c=>c.n).filter(Boolean).join(' e ');
@@ -1673,16 +1745,21 @@ function updatePreview(){
     });
   }
 
-  // VALUES
+  // VALUES — condicional: fixo ou personalizado
+  const _nacCustomOn=document.getElementById('nacValPersonalizado')?.checked||false;
+  const _nacCustomRows=_nacCustomOn?getNacValRows():[];
+  const _nacTbody=_nacCustomOn
+    ?_nacCustomRows.map(function(r){return'<tr><td>'+r.d+'</td><td class="vb">'+r.v+'</td><td>'+r.p+'</td></tr>';}).join('')
+    :'<tr><td>Pesquisa de Anterioridade</td><td class="vb">Isenta</td><td>&mdash;</td></tr>'
+     +'<tr><td>Deposito do Pedido</td><td class="vb">'+d.dep+'</td><td>'+d.dp+'</td></tr>'
+     +'<tr><td>Honorarios Advocaticios</td><td class="vb">'+d.hon+'</td><td>'+d.hp+'</td></tr>'
+     +'<tr><td>Exame de Merito</td><td class="vb">'+d.exa+'</td><td>Apos 12 meses do Deposito</td></tr>'
+     +'<tr><td>Anuidade de Manutencao</td><td class="vb">'+d.anu+'</td><td>Apos Certificado</td></tr>';
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide slide-val">
     <img class="vl-logo" src="${IMG_LOGO_W}"><span class="vl-label">Investimento</span>
     <div class="vl-title">Valores &mdash; Registro de Marca <span>${d.pr}</span>${nums?' &bull; Classe'+(d.cls.length>1?'s':'')+' '+nums:''}</div>
     <table class="vtbl"><thead><tr><th style="width:35%">Etapa / Servico</th><th style="width:22%">Valor</th><th>Pagamento</th></tr></thead><tbody>
-      <tr><td>Pesquisa de Anterioridade</td><td class="vb">Isenta</td><td>&mdash;</td></tr>
-      <tr><td>Deposito do Pedido</td><td class="vb">${d.dep}</td><td>${d.dp}</td></tr>
-      <tr><td>Honorarios Advocaticios</td><td class="vb">${d.hon}</td><td>${d.hp}</td></tr>
-      <tr><td>Exame de Merito</td><td class="vb">${d.exa}</td><td>Apos 12 meses do Deposito</td></tr>
-      <tr><td>Anuidade de Manutencao</td><td class="vb">${d.anu}</td><td>Apos Certificado</td></tr>
+      ${_nacTbody}
     </tbody></table>
     ${d.nc>1?`<div class="vl-note">* Valores referentes a ${d.nc} processos de registro — cada classe equivale a um processo independente.</div>`:''}
     ${d.nt?`<div class="vl-note">${d.nt}</div>`:''}
