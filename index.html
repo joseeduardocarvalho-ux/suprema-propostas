@@ -4074,10 +4074,10 @@ function madriInitPaises() {
     if (!regs[r]) return;
     html += '<div style="margin-bottom:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin-bottom:4px">' + r + '</div>';
     regs[r].forEach(function(p){
-      html += '<label id="madriLbl_' + p.cod + '" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px"'
-        + ' onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background=''">'
-        + '<input type="checkbox" id="madriChk_' + p.cod + '" value="' + p.cod + '"'
-        + ' onchange="madriTogglePais('' + p.cod + '',this.checked)" style="width:16px;height:16px;accent-color:#e63946;cursor:pointer;flex-shrink:0">'
+      html += '<label id="madriLbl_' + p.cod + '" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px"';
+      html += '>';
+      html += '<input type="checkbox" id="madriChk_' + p.cod + '" value="' + p.cod + '" data-cod="' + p.cod + '"'
+        + ' onchange="madriTogglePais(this.dataset.cod,this.checked)" style="width:16px;height:16px;accent-color:#e63946;cursor:pointer;flex-shrink:0">'
         + '<span style="flex:1">' + p.nome + '</span>'
         + '<span style="font-size:11px;opacity:.38;white-space:nowrap">'
         + (p.tipo === 'individual' ? 'individual' : 'compl.') + ' · ' + p.prazo + 'm</span>'
