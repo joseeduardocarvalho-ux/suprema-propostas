@@ -487,6 +487,14 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
   <div class="svc-info"><div class="svc-name">Gestão de Carteira</div><div class="svc-desc">Assumir e gerenciar portfólio completo de marcas do cliente</div></div>
   <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
 </div>
+<div class="svc-card active" onclick="openService('madri')">
+  <div class="svc-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5a17.92 17.92 0 01-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"/></svg></div>
+  <div class="svc-info">
+    <div class="svc-name">Protocolo de Madri</div>
+    <div class="svc-desc">Registro internacional de marcas — um pedido, múltiplos países</div>
+  </div>
+  <span class="svc-badge active-b"><span class="dot"></span>Ativo</span>
+</div>
 <div class="svc-card active parceria-card" onclick="openService('parceria')" style="grid-column:1/-1;">
   <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
   <div class="svc-info">
@@ -2002,6 +2010,9 @@ function openService(svc){
   } else if(svc==='cessao'){
     document.getElementById('generatorCessaoScreen').style.display='block';
     recalcCessaoPreview();
+  } else if(svc==='madri'){
+    document.getElementById('generatorMadriScreen').style.display='block';
+    recalcMadriPreview();
   } else {
     document.getElementById('generatorScreen').style.display='block';
   }
@@ -2032,6 +2043,7 @@ function goHome(){
   document.getElementById('generatorProrrogacaoScreen').style.display='none';
   document.getElementById('generatorCaducidadeScreen').style.display='none';
   document.getElementById('generatorAlteracaoScreen').style.display='none';
+  document.getElementById('generatorMadriScreen').style.display='none';
   document.getElementById('homeScreen').style.display='flex';
 }
 // Set home logo from the embedded logo data
@@ -2543,7 +2555,7 @@ function generateIntlPDF(){printProposal('previewAreaIntl');}
 window.addEventListener('DOMContentLoaded',function(){
   const li=document.getElementById('homeLogoIntl');
   if(li)li.src=IMG_LOGO_R;
-  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao','homeLogoGestao','homeLogoPacote','homeLogoAdicional'].forEach(id=>{
+  ['homeLogoPatIntl','homeLogoBlockchain','homeLogoDesenho','homeLogoSW','homeLogoDA','homeLogoPCT','homeLogoDeferimento','homeLogoRecurso','homeLogoManifestacao','homeLogoContrarazoes','homeLogoNotificacao','homeLogoCessao','homeLogoParceira','homeLogoOposicao','homeLogoNulidade','homeLogoProrrogacao','homeLogoCaducidade','homeLogoAlteracao','homeLogoGestao','homeLogoPacote','homeLogoAdicional','homeLogoMadri'].forEach(id=>{
     const el=document.getElementById(id);
     if(el)el.src=IMG_LOGO_R;
   });
@@ -3821,6 +3833,274 @@ function fmtCurrencyGeneric(el){
   if(!raw){el.value='';return;}
   el.value=fmtBRL(parseInt(raw));
 }
+
+
+// ── PROTOCOLO DE MADRI ──────────────────────────────────────────
+var MADRI_TAXAS_EM = '2026-08-01';
+
+var MADRI_PAISES = [
+  {cod:'CL',nome:'Chile',              regiao:'América', tipo:'individual',   fee1:210, fee2:210, feeN:210, prazo:18, opo:true},
+  {cod:'CO',nome:'Colômbia',      regiao:'América', tipo:'individual',   fee1:276, fee2:138, feeN:138, prazo:18, opo:true},
+  {cod:'BX',nome:'Benelux (BE+NL+LU)',regiao:'Europa',        tipo:'individual',   fee1:224, fee2:25,  feeN:75,  prazo:12, opo:false},
+  {cod:'IT',nome:'Itália',        regiao:'Europa',       tipo:'individual',   fee1:85,  fee2:28,  feeN:28,  prazo:18, opo:true},
+  {cod:'DE',nome:'Alemanha',           regiao:'Europa',       tipo:'complementar', fee1:100, fee2:0,   feeN:0,   prazo:12, opo:false},
+  {cod:'ES',nome:'Espanha',            regiao:'Europa',       tipo:'complementar', fee1:100, fee2:0,   feeN:0,   prazo:12, opo:false},
+  {cod:'FR',nome:'França',        regiao:'Europa',       tipo:'complementar', fee1:100, fee2:0,   feeN:0,   prazo:12, opo:false},
+  {cod:'PT',nome:'Portugal',           regiao:'Europa',       tipo:'complementar', fee1:100, fee2:0,   feeN:0,   prazo:12, opo:false}
+];
+
+var NAO_MEMBROS_MADRI = [
+  'Argentina','Paraguai','Uruguai','Venezuela','Peru',
+  'Bolívia','Bolivia','Equador','Ecuador'
+];
+
+var _madriSel = {};
+var _madriPaisesInited = false;
+
+function _madriNClasses() {
+  var raw = (document.getElementById('madriClasses') || {}).value || '';
+  var parts = raw.split(',').map(function(s){return s.trim();}).filter(Boolean);
+  return Math.max(1, parts.length);
+}
+
+function _madriCalcDes(p, n) {
+  if (p.tipo === 'complementar') return p.fee1;
+  var t = p.fee1;
+  if (n >= 2) t += p.fee2;
+  if (n > 2) t += (n - 2) * p.feeN;
+  return t;
+}
+
+function calcMadri() {
+  var n = _madriNClasses();
+  var cor = !!(document.getElementById('madriCorColor') && document.getElementById('madriCorColor').checked);
+  var basicFee = cor ? 903 : 653;
+  var cambio = parseFloat((document.getElementById('madriCambio') || {}).value) || 6.33;
+  var buffer = (parseFloat((document.getElementById('madriBuffer') || {}).value) || 10) / 100;
+  var aliq = parseFloat((document.getElementById('madriRemessa') || {}).value) || 0.23;
+  var gru = parseFloat((document.getElementById('madriGRU') || {}).value) || 406;
+  var honEst = parseFloat((document.getElementById('madriHonEst') || {}).value) || 4500;
+  var honCls = parseFloat((document.getElementById('madriHonClasse') || {}).value) || 1200;
+  var honDes = parseFloat((document.getElementById('madriHonDesig') || {}).value) || 800;
+  var pix = !!(document.getElementById('madriPix') && document.getElementById('madriPix').checked);
+  var pixPct = (parseFloat((document.getElementById('madriPixPct') || {}).value) || 6) / 100;
+
+  var taxaSup = 100 * Math.max(0, n - 3);
+  var sel = MADRI_PAISES.filter(function(p){ return _madriSel[p.cod]; });
+  var nDes = sel.length;
+  var somasDes = 0;
+  sel.forEach(function(p){ somasDes += _madriCalcDes(p, n); });
+
+  var subtCHF = basicFee + somasDes + taxaSup;
+  var subtBRL = subtCHF * cambio;
+  var comBuf = subtBRL * (1 + buffer);
+  var tributos = comBuf * aliq;
+  var totOMPI = comBuf + tributos;
+  var taxaINPI = gru * n;
+  var hon = honEst + honCls * Math.max(0, n - 1) + honDes * nDes;
+  var descPix = pix ? hon * pixPct : 0;
+  var total = totOMPI + taxaINPI + hon - descPix;
+
+  return {
+    n:n, cor:cor, basicFee:basicFee, cambio:cambio, buffer:buffer, aliq:aliq,
+    gru:gru, honEst:honEst, honCls:honCls, honDes:honDes, pix:pix, pixPct:pixPct,
+    taxaSup:taxaSup, sel:sel, nDes:nDes, somasDes:somasDes,
+    subtCHF:subtCHF, subtBRL:subtBRL, comBuf:comBuf, tributos:tributos,
+    totOMPI:totOMPI, taxaINPI:taxaINPI, hon:hon, descPix:descPix, total:total
+  };
+}
+
+function _madriPainelRow(lbl, val, neg) {
+  return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+    + '<span style="font-size:13px;opacity:.75">' + lbl + '</span>'
+    + '<span style="font-size:14px;font-weight:600;color:' + (neg ? 'rgba(100,230,150,.9)' : 'rgba(255,255,255,.95)') + '">'
+    + (neg ? '\u2212 ' : '') + fmtBRL2(Math.abs(val)) + '</span></div>';
+}
+
+function madriUpdatePanel(c) {
+  var el = document.getElementById('madriPainelLinhas');
+  if (!el) return;
+  var bPct = Math.round(c.buffer * 100);
+  var aPct = Math.round(c.aliq * 100);
+  var xPct = Math.round(c.pixPct * 100);
+  var h = '';
+  h += _madriPainelRow('Taxas OMPI (' + Math.round(c.subtCHF) + ' CHF × ' + c.cambio.toFixed(2) + ')', c.subtBRL, false);
+  h += _madriPainelRow('Buffer cambial (' + bPct + '%)', c.comBuf - c.subtBRL, false);
+  h += _madriPainelRow('Tributos sobre remessa (' + aPct + '%)', c.tributos, false);
+  h += _madriPainelRow('Taxa INPI — ' + c.n + ' classe(s) × R$ ' + c.gru.toFixed(2).replace('.',','), c.taxaINPI, false);
+  h += _madriPainelRow('Honorários Suprema', c.hon, false);
+  if (c.pix && c.descPix > 0) h += _madriPainelRow('Desconto PIX (' + xPct + '%)', c.descPix, true);
+  h += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 4px;margin-top:4px;border-top:2px solid rgba(255,255,255,.2)">'
+    + '<span style="font-size:15px;font-weight:700">TOTAL</span>'
+    + '<span style="font-size:17px;font-weight:800;color:rgba(180,255,210,1)">' + fmtBRL2(c.total) + '</span></div>';
+  el.innerHTML = h;
+}
+
+function madriInitPaises() {
+  if (_madriPaisesInited) return;
+  _madriPaisesInited = true;
+  var wrap = document.getElementById('madriPaisesContainer');
+  if (!wrap) return;
+  var regs = {};
+  MADRI_PAISES.forEach(function(p){
+    if (!regs[p.regiao]) regs[p.regiao] = [];
+    regs[p.regiao].push(p);
+  });
+  var html = '';
+  ['América','Europa','África','Ásia','Oceania'].forEach(function(r){
+    if (!regs[r]) return;
+    html += '<div style="margin-bottom:10px"><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin-bottom:4px">' + r + '</div>';
+    regs[r].forEach(function(p){
+      html += '<label id="madriLbl_' + p.cod + '" style="display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:8px;cursor:pointer;font-size:14px"'
+        + ' onmouseover="this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.background=''">'
+        + '<input type="checkbox" id="madriChk_' + p.cod + '" value="' + p.cod + '"'
+        + ' onchange="madriTogglePais('' + p.cod + '',this.checked)" style="width:16px;height:16px;accent-color:#e63946;cursor:pointer;flex-shrink:0">'
+        + '<span style="flex:1">' + p.nome + '</span>'
+        + '<span style="font-size:11px;opacity:.38;white-space:nowrap">'
+        + (p.tipo === 'individual' ? 'individual' : 'compl.') + ' · ' + p.prazo + 'm</span>'
+        + '</label>';
+    });
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+function madriTogglePais(cod, on) {
+  _madriSel[cod] = on;
+  var cnt = MADRI_PAISES.filter(function(p){ return _madriSel[p.cod]; }).length;
+  var el = document.getElementById('madriContadorDesignacoes');
+  if (el) el.textContent = cnt;
+  recalcMadriPreview();
+}
+
+function madriFiltraPaises() {
+  var q = ((document.getElementById('madriPaisBusca') || {}).value || '').trim().toLowerCase();
+  var aviso = document.getElementById('madriAvisoNaoMembro');
+
+  if (q.length >= 3) {
+    var qn = q.replace(/[áàãâ]/g,'a')
+               .replace(/[éèê]/g,'e')
+               .replace(/[íì]/g,'i')
+               .replace(/[óòõô]/g,'o')
+               .replace(/[úù]/g,'u')
+               .replace(/ç/g,'c');
+    if ('belgica'.indexOf(qn) === 0 || 'belgium'.indexOf(qn) === 0) {
+      if (aviso) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '<strong>Bélgica</strong> não é designável isoladamente no Protocolo de Madri. Selecione <strong>Benelux (BE+NL+LU)</strong> — cobre Bélgica, Holanda e Luxemburgo com uma única taxa.';
+      }
+      return;
+    }
+    var nm = NAO_MEMBROS_MADRI.find(function(n){
+      return n.toLowerCase().indexOf(q) === 0;
+    });
+    if (nm) {
+      if (aviso) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '<strong>' + nm + '</strong> não é membro do Protocolo de Madri. A proteção nesse país só é possível pela via nacional, com correspondente local, em orçamento separado.';
+      }
+      return;
+    }
+  }
+  if (aviso) aviso.style.display = 'none';
+
+  MADRI_PAISES.forEach(function(p){
+    var lbl = document.getElementById('madriLbl_' + p.cod);
+    if (!lbl) return;
+    var match = !q || p.nome.toLowerCase().indexOf(q) !== -1 || p.cod.toLowerCase() === q;
+    lbl.style.display = match ? 'flex' : 'none';
+  });
+}
+
+function recalcMadriPreview() {
+  madriInitPaises();
+  var c = calcMadri();
+  madriUpdatePanel(c);
+
+  var marca = (document.getElementById('madriMarca') || {}).value || 'Marca';
+  var cliente = (document.getElementById('madriCliente') || {}).value || '';
+  var classesRaw = (document.getElementById('madriClasses') || {}).value || '—';
+  var dataEl = document.getElementById('madriCambioData');
+  var dataStr = (dataEl && dataEl.value)
+    ? new Date(dataEl.value + 'T12:00:00').toLocaleDateString('pt-BR')
+    : MADRI_TAXAS_EM;
+  var aPct = Math.round(c.aliq * 100);
+
+  var h = '', sn = 1;
+
+  h += _slideCover('Sua marca protegida<br>em múltiplos países.', 'Protocolo de Madri · Suprema Propriedade Intelectual');
+  h += _slideInst(); sn = 3;
+
+  h += _slideInfo(sn++, 'Internacional', 'Protocolo de Madri',
+    'Um único pedido centralizado na OMPI garante a proteção da sua marca em dezenas de países — com prazo previsível, gestão unificada e custo controlado.',
+    [
+      {tit:'Um pedido, vários países', txt:'O Protocolo de Madri permite depositar um único pedido que designa múltiplos territórios, eliminando a necessidade de agentes locais em cada país.'},
+      {tit:'Gestão centralizada', txt:'Renovações, cessões e alterações de titular são feitas em um único ponto junto à OMPI em Genebra — sem precisar replicar procedimentos país a país.'},
+      {tit:'Custo previsível', txt:'As taxas de designação são calculadas em francos suíços (CHF) antes do depósito, permitindo planejamento financeiro preciso.'},
+      {tit:'Prazo máximo por país', txt:'Cada país designado tem 12 ou 18 meses para se pronunciar. O silêncio ao final desse prazo equivale a registro concedido.'}
+    ]
+  );
+
+  var regMap = {};
+  c.sel.forEach(function(p){ if(!regMap[p.regiao]) regMap[p.regiao]=[]; regMap[p.regiao].push(p.nome); });
+  var escopoCards = [];
+  ['América','Europa','África','Ásia','Oceania'].forEach(function(r){ if(regMap[r]) escopoCards.push({tit:r, txt:regMap[r].join(', ')}); });
+  escopoCards.push({tit:'Classes NCL', txt:classesRaw || '—'});
+  if (c.sel.some(function(p){return p.cod==='BX';}))
+    escopoCards.push({tit:'Cobertura Benelux', txt:'A designação Benelux cobre Bélgica, Holanda e Luxemburgo com uma única taxa de designação.'});
+  if (c.sel.some(function(p){return p.cod==='FR';}))
+    escopoCards.push({tit:'Territórios franceses', txt:'A designação França inclui automaticamente os territórios ultramarinos (Martinica, Guadalupe, Reunião e outros).'});
+
+  var escopoCorpo = c.nDes > 0
+    ? 'Esta proposta cobre o depósito internacional para ' + c.nDes + ' designação(es) em ' + c.n + ' classe(s) NCL — via Protocolo de Madri.'
+    : 'Selecione os países designados para ver o escopo desta proposta.';
+
+  h += _slideInfo(sn++, 'Escopo', 'Esta Proposta Cobre', escopoCorpo,
+    escopoCards.length ? escopoCards : [{tit:'Países', txt:'Nenhum país selecionado.'}]);
+
+  var notaVal = '* Valores em francos suíços convertidos à cotação de ' + dataStr + '. Sujeitos a variação cambial e à atualização das taxas da OMPI, revistas mensalmente. Tributos sobre remessa (' + aPct + '%) incluídos no valor OMPI.';
+  h += _slideVal(sn++,
+    (cliente ? cliente + ' — ' : '') + 'Protocolo de Madri · ' + marca,
+    [
+      {desc:'Taxas OMPI + tributos (' + Math.round(c.subtCHF) + ' CHF)', val:fmtBRL2(c.totOMPI), pgto:'Via ' + (c.aliq === 0.23 ? 'cartão' : 'transferência')},
+      {desc:'Taxa INPI — GRU cód. 3004 (' + c.n + ' classe(s))', val:fmtBRL2(c.taxaINPI), pgto:'À vista'},
+      {desc:'Honorários Suprema', val:fmtBRL2(c.hon - c.descPix), pgto:c.pix ? 'Com desconto PIX' : 'Conforme proposta'}
+    ],
+    notaVal
+  );
+
+  var p12 = c.sel.filter(function(p){return p.prazo===12;}).map(function(p){return p.nome;});
+  var p18 = c.sel.filter(function(p){return p.prazo===18;}).map(function(p){return p.nome + (p.opo ? ' *' : '');});
+  var cronCards = [];
+  if (p12.length) cronCards.push({tit:'Decisão em até 12 meses', txt:p12.join(', ')});
+  if (p18.length) cronCards.push({tit:'Decisão em até 18 meses', txt:p18.join(', ')});
+  if (c.sel.some(function(p){return p.opo;}))
+    cronCards.push({tit:'* Atenção — oposição pós-prazo', txt:'Países marcados com * podem notificar recusa por oposição de terceiro após o prazo oficial. O prazo refere-se à análise de ofício.'});
+  if (!cronCards.length) cronCards = [{tit:'—', txt:'Selecione países para visualizar o cronograma.'}];
+
+  h += _slideInfo(sn++, 'Prazo', 'Cronograma de Análise',
+    'Após o depósito, cada país designado tem prazo máximo para se manifestar. O silêncio equivale a registro concedido. Os prazos referem-se à análise de ofício pela autoridade nacional.',
+    cronCards
+  );
+
+  h += _slideInfo(sn++, 'Importante', 'O que Não Está Incluído',
+    'Para transparência e segurança jurídica de ambas as partes, os itens abaixo estão fora do escopo desta proposta e serão orçados separadamente se necessário.',
+    [
+      {tit:'Exigências formais da OMPI', txt:'Irregularidades notificadas pela OMPI após o depósito serão analisadas e orçadas caso a caso.'},
+      {tit:'Recusa provisória com agente local', txt:'Se um país emitir recusa provisória, a resposta exige correspondente local. Custo não incluído nesta proposta.'},
+      {tit:'Oposição de terceiros', txt:'Defesa contra oposição movida por titular de marca anterior em qualquer país designado. Requer orçamento específico.'},
+      {tit:'Acompanhamento e renovação', txt:'Prorrogação decenal do registro internacional e monitoramento de status anual não estão incluídos.'},
+      {tit:'⚠ Ataque central — risco inerente', txt:'O registro internacional depende do pedido base no INPI nos primeiros 5 anos. Indeferimento, arquivamento ou cancelamento do pedido brasileiro nesse período derruba a proteção em todos os países designados — sem exceção.'}
+    ]
+  );
+
+  h += _slideCTA(sn, 'Leve sua marca<br>para o mundo.', 'Fale com a Suprema');
+
+  var area = document.getElementById('previewAreaMadri');
+  if (area) area.innerHTML = h;
+}
+
+function generateMadriPDF() { printProposal('previewAreaMadri'); }
 
 function _slideTransparencia(sn){
   return `<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(10px,1.5vw,16px);">
@@ -5307,4 +5587,133 @@ function _setupCombineButtons(){
     <button class="btn-gen-combined" onclick="generateCombinedPDF()">Gerar PDF Combinado</button>
   </div>
 </div>
+
+<!-- ===== PROTOCOLO DE MADRI SCREEN ===== -->
+<div id="generatorMadriScreen" style="display:none">
+<div class="ambient"><div class="orb r"></div><div class="orb g"></div></div>
+<div class="page">
+<button class="btn-back" onclick="goHome()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Todos os serviços</button>
+<div class="header"><div class="header-logo"><img id="homeLogoMadri"></div><div class="header-title">Gerador de Propostas</div><div class="header-sub">Protocolo de Madri — Registro Internacional</div></div>
+<div class="form-panel">
+
+  <!-- ── DADOS DO CASO ── -->
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin-bottom:10px">Dados do Caso</div>
+
+  <div class="field">
+    <label class="field-label">Nome do Cliente</label>
+    <input type="text" id="madriCliente" placeholder="Ex: Empresa XYZ Ltda." oninput="recalcMadriPreview()">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Marca</label>
+    <input type="text" id="madriMarca" placeholder="Ex: BRANDX" oninput="recalcMadriPreview()">
+  </div>
+
+  <div class="field">
+    <label class="field-label">Classes NCL <span style="font-weight:400;opacity:.55">(ex: 35, 37, 42)</span></label>
+    <input type="text" id="madriClasses" placeholder="35, 42" oninput="recalcMadriPreview()">
+    <div style="font-size:11px;opacity:.4;margin-top:3px">Separe por vírgula — a contagem de vírgulas determina o número de classes</div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">Cor da Marca</label>
+    <div style="display:flex;gap:24px;margin-top:6px">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+        <input type="radio" name="madriCor" id="madriCorPB" value="pb" checked onchange="recalcMadriPreview()" style="width:16px;height:16px;accent-color:#e63946;cursor:pointer">
+        Preto e branco — 653 CHF
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+        <input type="radio" name="madriCor" id="madriCorColor" value="color" onchange="recalcMadriPreview()" style="width:16px;height:16px;accent-color:#e63946;cursor:pointer">
+        Colorida — 903 CHF
+      </label>
+    </div>
+    <div style="font-size:11px;opacity:.4;margin-top:4px">Definido pela reprodução do pedido base no INPI</div>
+  </div>
+
+  <!-- ── PAÍSES DESIGNADOS ── -->
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin:22px 0 10px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px">Países Designados</div>
+
+  <div class="field">
+    <label class="field-label">Buscar país</label>
+    <input type="text" id="madriPaisBusca" placeholder="Digite o nome do país..." style="font-size:14px" oninput="madriFiltraPaises()">
+    <div id="madriAvisoNaoMembro" style="display:none;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.35);border-radius:10px;padding:10px 14px;margin-top:8px;font-size:13px;color:rgba(255,160,160,1);line-height:1.6"></div>
+  </div>
+
+  <div id="madriPaisesContainer" style="margin-top:4px"><!-- populated by madriInitPaises() --></div>
+  <div style="font-size:12px;opacity:.55;margin-top:8px">
+    <span id="madriContadorDesignacoes" style="font-weight:700;font-size:14px">0</span> país(es) selecionado(s)
+  </div>
+
+  <!-- ── PARÂMETROS FINANCEIROS ── -->
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin:22px 0 10px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px">Parâmetros Financeiros</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="field">
+      <label class="field-label">Câmbio CHF / BRL</label>
+      <input type="number" id="madriCambio" value="6.33" step="0.01" min="1" oninput="recalcMadriPreview()" style="font-size:14px">
+    </div>
+    <div class="field">
+      <label class="field-label">Data do câmbio</label>
+      <input type="date" id="madriCambioData" oninput="recalcMadriPreview()" style="font-size:14px;color-scheme:dark">
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="field">
+      <label class="field-label">Buffer cambial (%)</label>
+      <input type="number" id="madriBuffer" value="10" step="1" min="0" max="50" oninput="recalcMadriPreview()" style="font-size:14px">
+    </div>
+    <div class="field">
+      <label class="field-label">Tributos sobre remessa à OMPI</label>
+      <select id="madriRemessa" onchange="recalcMadriPreview()" style="font-size:14px">
+        <option value="0.23">Cartão de crédito — 23%</option>
+        <option value="0.32">Transferência internacional — 32%</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label class="field-label">GRU INPI por classe (R$) <span style="font-weight:400;opacity:.55">— cód. 3004</span></label>
+    <input type="number" id="madriGRU" value="406" step="0.01" min="0" oninput="recalcMadriPreview()" style="font-size:14px">
+    <div style="font-size:11px;opacity:.4;margin-top:3px">Conferir tabela vigente antes de emitir a proposta</div>
+  </div>
+
+  <!-- ── HONORÁRIOS ── -->
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.4;margin:22px 0 10px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px">Honorários Suprema</div>
+
+  <div class="field">
+    <label class="field-label">Estruturação do pedido internacional (R$)</label>
+    <input type="number" id="madriHonEst" value="4500" step="100" min="0" oninput="recalcMadriPreview()" style="font-size:14px">
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="field">
+      <label class="field-label">Adicional por classe além da 1ª (R$)</label>
+      <input type="number" id="madriHonClasse" value="1200" step="100" min="0" oninput="recalcMadriPreview()" style="font-size:14px">
+    </div>
+    <div class="field">
+      <label class="field-label">Adicional por designação (R$)</label>
+      <input type="number" id="madriHonDesig" value="800" step="100" min="0" oninput="recalcMadriPreview()" style="font-size:14px">
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+    <input type="checkbox" id="madriPix" onchange="recalcMadriPreview()" style="width:18px;height:18px;accent-color:#e63946;cursor:pointer;flex-shrink:0">
+    <label for="madriPix" style="cursor:pointer;font-size:14px;flex:1">Desconto PIX sobre honorários</label>
+    <input type="number" id="madriPixPct" value="6" step="1" min="1" max="50" oninput="recalcMadriPreview()" style="width:64px;font-size:14px;text-align:center">
+    <span style="font-size:14px;opacity:.6">%</span>
+  </div>
+
+</div><!-- /form-panel -->
+
+<!-- ── PAINEL DE RESULTADO AO VIVO ── -->
+<div id="madriPainelResultado" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px 22px;margin:16px 0">
+  <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.35;margin-bottom:14px">Investimento Total</div>
+  <div id="madriPainelLinhas"></div>
+</div>
+
+<button class="btn-generate" onclick="generateMadriPDF()">Gerar PDF da Proposta</button>
+<div id="previewAreaMadri"></div>
+</div><!-- /page -->
+</div><!-- /generatorMadriScreen -->
 </body></html>
