@@ -542,7 +542,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-panel">
   <div class="field"><label class="field-label">Marca do Cliente</label><input type="text" id="recMarca" placeholder="Ex: BRANDX" oninput="recalcRecursoPreview()"></div>
   <div class="field"><label class="field-label">Marcas que Indeferiram <span style="font-weight:400;opacity:.6;">(separe por vírgula)</span></label><input type="text" id="recColidentes" placeholder="Ex: BRAND X, BRANDEX, BRANX" oninput="recalcRecursoPreview()"></div>
-  <div class="field"><label class="field-label">Decisão do INPI <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="recDecisao" rows="5" placeholder="Cole aqui o texto da decisão de indeferimento publicada na RPI..." oninput="recalcRecursoPreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Número de Classes</label>
     <div style="display:flex;align-items:center;gap:12px;">
       <button type="button" onclick="recRmvClass()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">−</button>
@@ -574,7 +574,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-panel">
   <div class="field"><label class="field-label">Marca do Cliente</label><input type="text" id="manMarca" placeholder="Ex: BRANDX" oninput="recalcManifestacaoPreview()"></div>
   <div class="field"><label class="field-label">Marcas Oponentes <span style="font-weight:400;opacity:.6;">(separe por vírgula)</span></label><input type="text" id="manOponentes" placeholder="Ex: BRAND X, BRANDEX" oninput="recalcManifestacaoPreview()"></div>
-  <div class="field"><label class="field-label">Texto da Oposição <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="manDecisao" rows="5" placeholder="Cole aqui o texto da oposição publicada na RPI..." oninput="recalcManifestacaoPreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Número de Classes</label>
     <div style="display:flex;align-items:center;gap:12px;">
       <button type="button" onclick="manRmvClass()" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">−</button>
@@ -606,7 +606,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-panel">
   <div class="field"><label class="field-label">Marca do Cliente</label><input type="text" id="ctrMarca" placeholder="Ex: BRANDX" oninput="recalcContrarazoesPreview()"></div>
   <div class="field"><label class="field-label">Quem Pediu a Nulidade <span style="font-weight:400;opacity:.6;">(separe por vírgula)</span></label><input type="text" id="ctrRequerente" placeholder="Ex: Empresa Concorrente Ltda." oninput="recalcContrarazoesPreview()"></div>
-  <div class="field"><label class="field-label">Texto do INPI <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="ctrTexto" rows="5" placeholder="Cole aqui o texto do pedido de nulidade ou decisão do INPI..." oninput="recalcContrarazoesPreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Elaboração e Protocolo da Peça</label>
     <div style="display:flex;gap:8px;align-items:center;">
       <input type="text" id="valContrarazoes" value="R$ 1.280,00" style="flex:1;min-width:0;" oninput="fmtCurrencyGeneric(this);recalcContrarazoesPreview()" onfocus="this.select()">
@@ -686,7 +686,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-panel">
   <div class="field"><label class="field-label">Marca do Cliente</label><input type="text" id="opMarcaCliente" placeholder="Ex: BRANDX" oninput="recalcOposicaoPreview()"></div>
   <div class="field"><label class="field-label">Marca(s) Adversária(s) <span style="font-weight:400;opacity:.6;">(separe por vírgula)</span></label><input type="text" id="opMarcaAdv" placeholder="Ex: BRAND X, BRANDEX" oninput="recalcOposicaoPreview()"></div>
-  <div class="field"><label class="field-label">Texto / Motivo da Oposição <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="opTexto" rows="4" placeholder="Cole aqui o texto da publicação ou motivo da oposição..." oninput="recalcOposicaoPreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Elaboração e Protocolo da Oposição</label>
     <div style="display:flex;gap:8px;align-items:center;">
       <input type="text" id="valOposicao" value="R$ 1.260,00" style="flex:1;min-width:0;" oninput="fmtCurrencyGeneric(this);recalcOposicaoPreview()" onfocus="this.select()">
@@ -708,7 +708,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
   <div class="field"><label class="field-label">Marca do Cliente (fundamento)</label><input type="text" id="nulMarcaCliente" placeholder="Ex: BRANDX" oninput="recalcNulidadePreview()"></div>
   <div class="field"><label class="field-label">Marca a ser Anulada</label><input type="text" id="nulMarcaAlvo" placeholder="Ex: BRAND X" oninput="recalcNulidadePreview()"></div>
   <div class="field"><label class="field-label">Titular da Marca Alvo</label><input type="text" id="nulTitular" placeholder="Ex: Empresa Concorrente Ltda." oninput="recalcNulidadePreview()"></div>
-  <div class="field"><label class="field-label">Fundamentos da Nulidade <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="nulTexto" rows="4" placeholder="Descreva os fundamentos ou cole o texto do processo..." oninput="recalcNulidadePreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Elaboração e Protocolo da Nulidade</label>
     <div style="display:flex;gap:8px;align-items:center;">
       <input type="text" id="valNulidade" value="R$ 1.636,00" style="flex:1;min-width:0;" oninput="fmtCurrencyGeneric(this);recalcNulidadePreview()" onfocus="this.select()">
@@ -748,7 +748,7 @@ footer.pg-footer{padding:40px 0 20px;text-align:center;font-size:10px;color:var(
 <div class="form-panel">
   <div class="field"><label class="field-label">Marca do Cliente</label><input type="text" id="cadMarca" placeholder="Ex: BRANDX" oninput="recalcCaducidadePreview()"></div>
   <div class="field"><label class="field-label">Requerente da Caducidade <span style="font-weight:400;opacity:.6;">(separe por vírgula)</span></label><input type="text" id="cadRequerente" placeholder="Ex: Empresa Concorrente Ltda." oninput="recalcCaducidadePreview()"></div>
-  <div class="field"><label class="field-label">Texto do INPI <span style="font-weight:400;opacity:.6;">(copie e cole)</span></label><textarea id="cadTexto" rows="4" placeholder="Cole aqui o texto do pedido de caducidade..." oninput="recalcCaducidadePreview()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;resize:vertical;font-family:inherit;line-height:1.5;"></textarea></div>
+
   <div class="field"><label class="field-label">Elaboração e Protocolo da Peça</label>
     <div style="display:flex;gap:8px;align-items:center;">
       <input type="text" id="valCaducidade" value="R$ 1.200,00" style="flex:1;min-width:0;" oninput="fmtCurrencyGeneric(this);recalcCaducidadePreview()" onfocus="this.select()">
@@ -4388,7 +4388,7 @@ function recSavePerClass(){
 function recalcRecursoPreview(){
   const marca=document.getElementById('recMarca').value||'Marca';
   const colidentes=(document.getElementById('recColidentes').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const decisao=document.getElementById('recDecisao').value||'';
+
   const n=Math.max(1,parseInt(document.getElementById('recClassCount').textContent||'1'));
   const valor=document.getElementById('valRecurso').value||fmtBRL(recPerClass*n);
   const pgto=document.getElementById('pgtoRecurso').value||'À vista';
@@ -4403,9 +4403,7 @@ function recalcRecursoPreview(){
   // SLIDE: Análise do Caso
   const colTag=c=>`<span style="display:inline-block;padding:clamp(3px,.4vw,5px) clamp(8px,1vw,12px);background:rgba(230,0,0,.12);border:1px solid rgba(230,0,0,.25);border-radius:4px;font-size:clamp(6px,.85vw,10px);font-weight:700;color:rgba(255,255,255,.8);margin:2px;">${c}</span>`;
   const coliHtml=colidentes.length?colidentes.map(colTag).join(''):`<span style="font-size:clamp(6px,.85vw,10px);color:rgba(255,255,255,.3);font-style:italic;">Não informado</span>`;
-  const decisaoHtml=decisao
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${decisao}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Decisão não informada.</div>`;
+
 
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
@@ -4415,7 +4413,7 @@ function recalcRecursoPreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca Requerida</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -4424,10 +4422,6 @@ function recalcRecursoPreview(){
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marcas Colidentes</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;">${coliHtml}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Decisão do INPI</div>
-        <div style="flex:1;overflow:hidden;">${decisaoHtml}</div>
       </div>
     </div>
   </div></div>`;
@@ -4477,7 +4471,7 @@ function manSavePerClass(){
 function recalcManifestacaoPreview(){
   const marca=document.getElementById('manMarca').value||'Marca';
   const oponentes=(document.getElementById('manOponentes').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const decisao=document.getElementById('manDecisao').value||'';
+
   const n=Math.max(1,parseInt(document.getElementById('manClassCount').textContent||'1'));
   const valor=document.getElementById('valManifestacao').value||fmtBRL(manPerClass*n);
   const pgto=document.getElementById('pgtoManifestacao').value||'À vista';
@@ -4492,10 +4486,6 @@ function recalcManifestacaoPreview(){
   // SLIDE: Análise do Caso
   const colTag=c=>`<span style="display:inline-block;padding:clamp(3px,.4vw,5px) clamp(8px,1vw,12px);background:rgba(230,0,0,.12);border:1px solid rgba(230,0,0,.25);border-radius:4px;font-size:clamp(6px,.85vw,10px);font-weight:700;color:rgba(255,255,255,.8);margin:2px;">${c}</span>`;
   const opoHtml=oponentes.length?oponentes.map(colTag).join(''):`<span style="font-size:clamp(6px,.85vw,10px);color:rgba(255,255,255,.3);font-style:italic;">Não informado</span>`;
-  const decisaoHtml=decisao
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${decisao}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Texto da oposição não informado.</div>`;
-
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
     <span style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Análise do Caso</span>
@@ -4504,7 +4494,7 @@ function recalcManifestacaoPreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca Requerida</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -4513,10 +4503,6 @@ function recalcManifestacaoPreview(){
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marcas Oponentes</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;">${opoHtml}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Texto da Oposição</div>
-        <div style="flex:1;overflow:hidden;">${decisaoHtml}</div>
       </div>
     </div>
   </div></div>`;
@@ -4546,7 +4532,7 @@ function generateManifestacaoPDF(){printProposal('previewAreaManifestacao');}
 function recalcContrarazoesPreview(){
   const marca=document.getElementById('ctrMarca').value||'Marca';
   const requerentes=(document.getElementById('ctrRequerente').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const texto=document.getElementById('ctrTexto').value||'';
+
   const valor=document.getElementById('valContrarazoes').value||'R$ 1.280,00';
   const pgto=document.getElementById('pgtoContrarazoes').value||'À vista';
   let h='', sn=1;
@@ -4560,9 +4546,6 @@ function recalcContrarazoesPreview(){
   // SLIDE: Análise do Caso
   const reqTag=c=>`<span style="display:inline-block;padding:clamp(3px,.4vw,5px) clamp(8px,1vw,12px);background:rgba(230,0,0,.12);border:1px solid rgba(230,0,0,.25);border-radius:4px;font-size:clamp(6px,.85vw,10px);font-weight:700;color:rgba(255,255,255,.8);margin:2px;">${c}</span>`;
   const reqHtml=requerentes.length?requerentes.map(reqTag).join(''):`<span style="font-size:clamp(6px,.85vw,10px);color:rgba(255,255,255,.3);font-style:italic;">Não informado</span>`;
-  const textoHtml=texto
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${texto}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Texto do INPI não informado.</div>`;
 
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
@@ -4572,7 +4555,7 @@ function recalcContrarazoesPreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca Registrada</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -4581,10 +4564,6 @@ function recalcContrarazoesPreview(){
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Requerente(s) da Nulidade</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;">${reqHtml}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Texto do INPI</div>
-        <div style="flex:1;overflow:hidden;">${textoHtml}</div>
       </div>
     </div>
   </div></div>`;
@@ -4866,7 +4845,7 @@ function generateParceiraPDF(){printProposal('previewAreaParceira');}
 function recalcOposicaoPreview(){
   const marca=document.getElementById('opMarcaCliente').value||'Marca';
   const adversarias=(document.getElementById('opMarcaAdv').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const texto=document.getElementById('opTexto').value||'';
+
   const valor=document.getElementById('valOposicao').value||'R$ 1.260,00';
   const pgto=document.getElementById('pgtoOposicao').value||'À vista';
   let h='', sn=1;
@@ -4880,10 +4859,6 @@ function recalcOposicaoPreview(){
   // SLIDE: Análise do Caso
   const advTag=c=>`<span style="display:inline-block;padding:clamp(3px,.4vw,5px) clamp(8px,1vw,12px);background:rgba(230,0,0,.12);border:1px solid rgba(230,0,0,.25);border-radius:4px;font-size:clamp(6px,.85vw,10px);font-weight:700;color:rgba(255,255,255,.8);margin:2px;">${c}</span>`;
   const advHtml=adversarias.length?adversarias.map(advTag).join(''):`<span style="font-size:clamp(6px,.85vw,10px);color:rgba(255,255,255,.3);font-style:italic;">Não informado</span>`;
-  const textoHtml=texto
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${texto}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Texto da publicação não informado.</div>`;
-
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
     <span style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Análise do Caso</span>
@@ -4892,7 +4867,7 @@ function recalcOposicaoPreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca do Cliente</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -4901,10 +4876,6 @@ function recalcOposicaoPreview(){
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca(s) Adversária(s)</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;">${advHtml}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Texto / Motivo da Oposição</div>
-        <div style="flex:1;overflow:hidden;">${textoHtml}</div>
       </div>
     </div>
   </div></div>`;
@@ -4934,7 +4905,7 @@ function recalcNulidadePreview(){
   const marca=document.getElementById('nulMarcaCliente').value||'Marca';
   const marcaAlvo=document.getElementById('nulMarcaAlvo').value||'Marca Alvo';
   const titular=document.getElementById('nulTitular').value||'Titular';
-  const texto=document.getElementById('nulTexto').value||'';
+
   const valor=document.getElementById('valNulidade').value||'R$ 1.636,00';
   const pgto=document.getElementById('pgtoNulidade').value||'À vista';
   let h='', sn=1;
@@ -4946,10 +4917,6 @@ function recalcNulidadePreview(){
     `A nulidade é o procedimento legal pelo qual se <strong style="color:#fff">invalida um registro de marca concedido irregularmente</strong> pelo INPI. Pode ser requerida por qualquer pessoa com legítimo interesse, tanto administrativamente (no prazo de 180 dias) quanto judicialmente (no prazo de 5 anos).<br><br>É o instrumento mais poderoso para <strong style="color:#fff">eliminar do mercado uma marca que causa confusão ou prejudica direitos anteriores</strong>, permitindo que o titular da marca legítima atue com exclusividade plena no seu segmento.`,[]);
 
   // SLIDE: Análise do Caso
-  const textoHtml=texto
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${texto}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Fundamentos não informados.</div>`;
-
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
     <span style="position:absolute;top:clamp(8px,1.4vw,16px);left:clamp(12px,2vw,24px);font-size:clamp(5px,.65vw,8px);color:rgba(255,255,255,.3);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Análise do Caso</span>
@@ -4958,7 +4925,7 @@ function recalcNulidadePreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca do Cliente</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -4968,10 +4935,6 @@ function recalcNulidadePreview(){
           <div style="font-size:clamp(8px,1.1vw,14px);font-weight:700;color:rgba(255,80,80,.9);letter-spacing:.5px;">${marcaAlvo}</div>
           <div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.4);">Titular: ${titular}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Fundamentos da Nulidade</div>
-        <div style="flex:1;overflow:hidden;">${textoHtml}</div>
       </div>
     </div>
   </div></div>`;
@@ -5033,7 +4996,7 @@ function generateProrrogacaoPDF(){printProposal('previewAreaProrrogacao');}
 function recalcCaducidadePreview(){
   const marca=document.getElementById('cadMarca').value||'Marca';
   const requerentes=(document.getElementById('cadRequerente').value||'').split(',').map(s=>s.trim()).filter(Boolean);
-  const texto=document.getElementById('cadTexto').value||'';
+
   const valor=document.getElementById('valCaducidade').value||'R$ 1.200,00';
   const pgto=document.getElementById('pgtoCaducidade').value||'À vista';
   let h='', sn=1;
@@ -5047,9 +5010,6 @@ function recalcCaducidadePreview(){
   // SLIDE: Análise do Caso
   const reqTag=c=>`<span style="display:inline-block;padding:clamp(3px,.4vw,5px) clamp(8px,1vw,12px);background:rgba(230,0,0,.12);border:1px solid rgba(230,0,0,.25);border-radius:4px;font-size:clamp(6px,.85vw,10px);font-weight:700;color:rgba(255,255,255,.8);margin:2px;">${c}</span>`;
   const reqHtml=requerentes.length?requerentes.map(reqTag).join(''):`<span style="font-size:clamp(6px,.85vw,10px);color:rgba(255,255,255,.3);font-style:italic;">Não informado</span>`;
-  const textoHtml=texto
-    ?`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.6);line-height:1.65;font-style:italic;overflow:hidden;display:-webkit-box;-webkit-line-clamp:10;-webkit-box-orient:vertical;">"${texto}"</div>`
-    :`<div style="font-size:clamp(5px,.68vw,8.5px);color:rgba(255,255,255,.25);font-style:italic;">Texto do INPI não informado.</div>`;
 
   h+=`<div class="slide-wrap"><div class="slide-num-label">SLIDE ${sn++}</div><div class="slide" style="background:#1a1a1e;display:flex;flex-direction:column;padding:5%;padding-top:clamp(32px,5vw,56px);position:relative;gap:clamp(8px,1.2vw,14px);">
     <img src="${IMG_LOGO_W}" style="position:absolute;top:clamp(8px,1.4vw,16px);right:clamp(12px,2vw,24px);height:clamp(14px,2vw,24px);opacity:.3;pointer-events:none;">
@@ -5059,7 +5019,7 @@ function recalcCaducidadePreview(){
       <div style="font-size:clamp(10px,1.5vw,19px);font-weight:800;color:#fff;line-height:1.2;">Análise do caso — <span style="color:var(--red);">${marca}</span></div>
     </div>
     <div style="display:flex;gap:clamp(10px,1.5vw,18px);flex:1;min-height:0;">
-      <div style="flex:0 0 32%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
+      <div style="flex:0 0 48%;display:flex;flex-direction:column;gap:clamp(6px,.9vw,12px);">
         <div style="background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(3px,.4vw,5px);">
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Marca do Cliente</div>
           <div style="font-size:clamp(9px,1.3vw,16px);font-weight:900;color:#fff;letter-spacing:.5px;">${marca}</div>
@@ -5068,10 +5028,6 @@ function recalcCaducidadePreview(){
           <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">Requerente(s) da Caducidade</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;">${reqHtml}</div>
         </div>
-      </div>
-      <div style="flex:1;background:rgba(255,255,255,.04);border-radius:clamp(6px,.8vw,10px);padding:clamp(8px,1.2vw,14px);display:flex;flex-direction:column;gap:clamp(4px,.6vw,8px);min-height:0;overflow:hidden;">
-        <div style="font-size:clamp(4.5px,.6vw,7.5px);color:rgba(255,255,255,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;">Texto do INPI</div>
-        <div style="flex:1;overflow:hidden;">${textoHtml}</div>
       </div>
     </div>
   </div></div>`;
